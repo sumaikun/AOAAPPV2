@@ -1,0 +1,5 @@
+<StackLayout orientation="vertical" class="modal-container">
+    <SearchBar hint="Buscar placa" [text]="searchPhrase" (submit)="onSearchSubmit($event)"></SearchBar>
+    <Button text="Filtrar" class="filter-button" (tap)="filterPlate()"></Button>
+    <!--<Button class="btn btn-outline" text="Cerrar" (tap)="close()"></Button>-->
+</StackLayout>

@@ -1,0 +1,138 @@
+.sidedrawer-header {
+  background-color: #003057;
+  height: 84dp;
+  width: 100%;
+  position: relative;
+}
+
+.sidedrawer-header::before {
+    content: "";
+    display: block;
+    position: absolute;
+    background-color: #003057;
+    height: 84dp;
+    border-bottom-right-radius: 100%
+}
+
+
+
+
+.sidedrawer-header-text {
+
+}
+
+#side-logo{
+    width: 60%;
+    height: 60%;
+    margin-top: 15dp;
+    margin-right: 128dp;
+    margin-left: 32dp;
+}
+
+.fa {
+    font-family: "FontAwesome";
+}
+
+.action-bar {
+    background-color: #437077;
+}
+
+.ab-icon {
+    color: white;
+}
+
+.page-content .page-placeholder {
+    color: #D7D7D7;
+    font-size: 20;
+    vertical-align: center;
+    horizontal-align: center;
+}
+.page-content .page-icon {
+    vertical-align: top;
+    horizontal-align: center;
+}
+
+.icon-container {
+    background-color: #003057;
+    height: 74dp;
+    width: 86dp;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.page-content {
+    background-color: white;
+}
+
+.hr-light {
+    background-color: #224A50;
+    height: 1px;
+}
+
+.sidedrawer-container{
+    background-color: #437077;
+}
+
+.sidedrawer {
+    background-color: #437077;
+    width: 100%;
+}
+
+
+
+.sidedrawer-header-footnote {
+    color: white;
+    text-align: center;
+    font-size: 16;
+}
+
+.sidedrawer-icon {
+   width:28dp;
+   height: 31dp;
+   margin-top:15d;
+}
+
+.title-container{
+    background-color:#437077;
+    width:193dp;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #224A50;
+}
+
+
+
+
+.sidedrawer-list-item {
+    color: white;
+    font-size: 16dp;
+    font-family: Roboto;
+    height: 80;
+    margin-top:-6dp;
+}
+
+.sidedrawer-item {
+    margin-top: 22dp;
+    margin-left: 8dp;
+    display: absolute;
+    z-index: 0;
+}
+.select-icon{
+    z-index: 1;
+    margin-top: -25dp;
+    margin-left:100dp;
+    position: absolute;
+}
+
+.sidedrawer-list-item-active {
+    background-color: #a6a450;
+}
+
+.sidedrawer-content-container{
+
+}
+
+#lastIconContainer{
+    border-bottom-right-radius: 100%;
+}

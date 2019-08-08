@@ -1,0 +1,25 @@
+<GridLayout rows="auto,auto">
+    <AbsoluteLayout class="app-header">
+        <Image src="~/images/icons/menu.png" class="sidedrawer-icon" (tap)="onDrawerButtonTap($event)"></Image>
+        <FlexboxLayout class="app-title-container" justifyContent="center"
+            alignItems="center">
+            <Label class="app-title" text="{{ pageTitle }}"></Label>
+        </FlexboxLayout>
+    </AbsoluteLayout>
+
+    <GridLayout row="1">
+        <ng-content></ng-content>
+    </GridLayout>
+
+    <!--<TabView *ngIf="mode === 'tabs'" androidTabsPosition="bottom"
+        tabBackgroundColor="#003057" ndroidSelectedTabHighlightColor="#004857"
+        row="1">
+        <StackLayout *tabItem="{title: 'Tab 1'}">
+            <Label text="Label in Tab 1"></Label>
+        </StackLayout>
+        <StackLayout *tabItem="{title: 'Tab 2'}">
+            <Label text="Label in Tab 2"></Label>
+        </StackLayout>
+    </TabView>-->
+
+</GridLayout>

@@ -1,0 +1,68 @@
+<RadSideDrawer drawerTransition="PushTransition" class="sidedrawer-container">
+
+    <GridLayout tkDrawerContent rows="
+    auto, *" class="sidedrawer sidedrawer-left">
+        <StackLayout class="sidedrawer-header">
+            <Image id="side-logo" src="~/images/logo.png"></Image>
+        </StackLayout>
+
+        <ScrollView row="1" class="sidedrawer-content-container">
+            <StackLayout class="sidedrawer-content">
+
+
+                <WrapLayout orientation="horizontal" class="sidedrawer-list-item"
+                    title="Home" tap="onNavigationItemTap">
+                    <StackLayout class="icon-container">
+                        <Image src="~/images/icons/user.png" class="sidedrawer-icon"></Image>
+                    </StackLayout>
+                    <StackLayout class="title-container" (tap)="goTo('/home')">
+                        <Label text="Perfil" class="sidedrawer-item"></Label>
+                        <Image src="~/images/icons/arrow.png" class="select-icon  sidedrawer-icon"></Image>
+                    </StackLayout>
+                </WrapLayout>
+
+                <WrapLayout orientation="horizontal" class="sidedrawer-list-item"
+                    title="Citas" tap="onNavigationItemTap">
+                    <StackLayout class="icon-container">
+                        <Image src="~/images/icons/blackboard.png" class="sidedrawer-icon"></Image>
+                    </StackLayout>
+                    <StackLayout class="title-container" (tap)="goTo('/citas')" >
+                        <Label text="Citas del día"  class="sidedrawer-item"></Label>
+                        <Image src="~/images/icons/arrow.png" class="select-icon  sidedrawer-icon"></Image>
+                    </StackLayout>
+                </WrapLayout>
+
+                <WrapLayout orientation="horizontal" class="sidedrawer-list-item"
+                    title="Home" tap="onNavigationItemTap">
+                    <StackLayout class="icon-container">
+                        <Image src="~/images/icons/upload2.png" class="sidedrawer-icon"></Image>
+                    </StackLayout>
+                    <StackLayout class="title-container">
+                        <Label text="Sincronizar" class="sidedrawer-item"></Label>
+                        <Image src="~/images/icons/arrow.png" class="select-icon  sidedrawer-icon"></Image>
+                    </StackLayout>
+                </WrapLayout>
+
+
+                <WrapLayout orientation="horizontal" class="sidedrawer-list-item"
+                    title="Home" tap="onNavigationItemTap" (tap)="signOut()">
+                    <StackLayout class="icon-container" style="border-width:0px 0px 1px 0px"
+                        id="lastIconContainer">
+                        <Image src="~/images/icons/key.png" class="sidedrawer-icon"></Image>
+                    </StackLayout>
+                    <StackLayout class="title-container" style="border-width:1px 1px 0px 0px">
+                        <Label text="Cerrar sesión" class="sidedrawer-item"></Label>
+                        <Image src="~/images/icons/arrow.png" class="select-icon  sidedrawer-icon"></Image>
+                    </StackLayout>
+                </WrapLayout>
+
+                <StackLayout class="hr-light" style="margin-top:-6dp;"></StackLayout>
+
+
+            </StackLayout>
+        </ScrollView>
+
+    </GridLayout>
+
+    <page-router-outlet tkMainContent class="page page-content"></page-router-outlet>
+</RadSideDrawer>

@@ -1,0 +1,11 @@
+.animation-logo {
+    animation-name: example;
+    animation-duration: 2; 
+	animation-iteration-count: infinite;
+    animation-timing-function: spring;
+    animation-fill-mode: forwards;
+}
+@keyframes example {
+    from { transform: translate(0, 0); }
+    to { transform: translate(0, 100); }
+}

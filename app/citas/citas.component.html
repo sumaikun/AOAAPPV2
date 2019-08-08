@@ -1,0 +1,100 @@
+<Loading *ngIf="isFetching"></Loading>
+<StackLayout *ngIf="!isFetching" orientation="vertical">
+    <PageContainer pageTitle="{{TabTitle}}">
+        <StackLayout orientation="vertical">
+            <StackLayout class="search-container" orientation="horizontal">
+                <Image (tap)="officeSearch()"  horizontalAlignment="left" id="location-icon"
+                    src="~/images/icons/location2.png"></Image>
+                <StackLayout id="search-Container-text" horizontalAlignment="center"
+                    orientation="vertical">
+                    <Label text="Oficina: {{infoOffice}} "></Label>
+                    <Label [text]="infoDate" class="date-label"></Label>
+                </StackLayout>
+                <Image (tap)="plateSearch()"  id="search-icon" horizontalAlignment="right"
+                    src="~/images/icons/lupa.png"></Image>
+            </StackLayout>
+            <FlexboxLayout justifyContent="space-between" alignItems="center"
+                class="list-head">
+                <Label text="Placas" class="list-th" flexGrow="1"></Label>
+                <Label text="Horas" class="list-th" flexGrow="2"></Label>
+                <Label text="Datos" class="list-th" flexGrow="3"></Label>
+            </FlexboxLayout>
+        </StackLayout>
+    </PageContainer>
+
+    <TabView androidTabsPosition="bottom" tabBackgroundColor="#003057"
+        androidSelectedTabHighlightColor="#004857"
+        (selectedIndexChanged)="onSelectedIndexChanged($event)">
+        <StackLayout *tabItem="{title: 'Citas entrega'}" style="background-color:#224A50">
+            <ListView class="list-group" [items]="deliverAppointments" (itemTap)="onItemTap($event)"
+                style="height:1250px">
+                <ng-template let-cita="item">
+                    <FlexboxLayout class="cita-item-container">
+                        <FlexboxLayout class="cita-item" justifyContent="space-between"
+                            alignItems="center">
+                            <Label [text]="cita.placa" class="label-placa" flexGrow="1"></Label>
+                            <Label [text]="cita.hora" class="label-placa" flexGrow="2"></Label>
+                            <StackLayout orientation="vertical" class="info-container">
+                                <StackLayout orientation="horizontal">
+                                    <Image horizontalAlignment="left" width="19dp"
+                                        height="19dp" class="info-icon" src="~/images/icons/driver.png"></Image>
+                                    <Label text="Conductor: " style="font-family:Roboto-Medium;"
+                                        class="asegurado-label" flexGrow="1"></Label>
+                                    <Label [text]="cita.conductor" class="asegurado-label"
+                                        flexGrow="1"></Label>
+                                </StackLayout>
+                                <StackLayout style="margin-top:10dp;"
+                                    orientation="horizontal">
+                                    <Image horizontalAlignment="left" width="19dp"
+                                        height="19dp" class="info-icon" src="~/images/icons/blackboard2.png">
+                                    </Image>
+                                    <Label text="Asegurado: " style="font-family:Roboto-Medium;"
+                                        class="asegurado-label" flexGrow="2"></Label>
+                                    <Label [text]="cita.asegurado" class="asegurado-label"
+                                        flexGrow="2"></Label>
+                                </StackLayout>
+                            </StackLayout>
+                        </FlexboxLayout>
+                    </FlexboxLayout>
+                </ng-template>
+            </ListView>
+        </StackLayout>
+        <StackLayout *tabItem="{title: 'Citas de devolución'}" style="background-color:#224A50">
+
+          <ListView class="list-group" [items]="devolutionAppointments" (itemTap)="onItemTap($event)"
+              style="height:1250px">
+              <ng-template let-cita="item">
+                  <FlexboxLayout class="cita-item-container">
+                      <FlexboxLayout class="cita-item" justifyContent="space-between"
+                          alignItems="center">
+                          <Label [text]="cita.placa" class="label-placa" flexGrow="1"></Label>
+                          <Label [text]="cita.hora" class="label-placa" flexGrow="2"></Label>
+                          <StackLayout orientation="vertical" class="info-container">
+                              <StackLayout orientation="horizontal">
+                                  <Image horizontalAlignment="left" width="19dp"
+                                      height="19dp" class="info-icon" src="~/images/icons/driver.png"></Image>
+                                  <Label text="Conductor: " style="font-family:Roboto-Medium;"
+                                      class="asegurado-label" flexGrow="1"></Label>
+                                  <Label [text]="cita.conductor" class="asegurado-label"
+                                      flexGrow="1"></Label>
+                              </StackLayout>
+                              <StackLayout style="margin-top:10dp;"
+                                  orientation="horizontal">
+                                  <Image horizontalAlignment="left" width="19dp"
+                                      height="19dp" class="info-icon" src="~/images/icons/blackboard2.png">
+                                  </Image>
+                                  <Label text="Asegurado: " style="font-family:Roboto-Medium;"
+                                      class="asegurado-label" flexGrow="2"></Label>
+                                  <Label [text]="cita.asegurado" class="asegurado-label"
+                                      flexGrow="2"></Label>
+                              </StackLayout>
+                          </StackLayout>
+                      </FlexboxLayout>
+                  </FlexboxLayout>
+              </ng-template>
+          </ListView>
+
+
+        </StackLayout>
+    </TabView>
+</StackLayout>

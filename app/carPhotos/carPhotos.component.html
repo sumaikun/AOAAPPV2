@@ -1,0 +1,46 @@
+<StackLayout orientation="vertical">
+    <PageContainer pageTitle="Fotos">
+
+    </PageContainer>
+    <TabView androidTabsPosition="bottom" tabBackgroundColor="#003057"
+        androidSelectedTabHighlightColor="#004857">
+        <StackLayout *tabItem="{title: 'Imagenes Vehículo'}" style="background-color:#224A50">
+
+            <FlexboxLayout class="button-item" alignItems="center"
+                justifyContent="space-between">
+                <Image src="~/images/icons/instagram.png" width="30%" height="30%"
+                    class="pic-icon"></Image>
+                <Label class="button-label" text="FOTO FRONTAL"></Label>
+                <Image class="car-icon" src="~/images/icons/frontSide.png"></Image>
+            </FlexboxLayout>
+
+            <FlexboxLayout class="button-item" alignItems="center"
+                justifyContent="space-between">
+                <Image src="~/images/icons/instagram.png" width="30%" height="30%"
+                    class="pic-icon"></Image>
+                <Label class="button-label" text="FOTO IZQUIERDA"></Label>
+                <Image class="car-icon" src="~/images/icons/leftSide.png"></Image>
+            </FlexboxLayout>
+
+            <FlexboxLayout class="button-item" alignItems="center"
+                justifyContent="space-between">
+                <Image src="~/images/icons/instagram.png" width="30%" height="30%"
+                    class="pic-icon"></Image>
+                <Label class="button-label" text="FOTO DERECHA"></Label>
+                <Image class="car-icon" src="~/images/icons/rightSide.png"></Image>
+            </FlexboxLayout>
+
+            <FlexboxLayout class="button-item" alignItems="center"
+                justifyContent="space-between">
+                <Image src="~/images/icons/instagram.png" width="30%" height="30%"
+                    class="pic-icon"></Image>
+                <Label class="button-label" text="FOTO TRASERA"></Label>
+                <Image class="car-icon" src="~/images/icons/backSide.png"></Image>
+            </FlexboxLayout>
+
+        </StackLayout>
+        <StackLayout *tabItem="{title: 'Imagenes Documentos'}" style="background-color:#224A50">
+
+        </StackLayout>
+    </TabView>
+</StackLayout>

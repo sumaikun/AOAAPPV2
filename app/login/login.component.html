@@ -1,0 +1,26 @@
+<Loading *ngIf="isFetching"></Loading>
+<ScrollView  *ngIf="!isFetching" width="100%" height="100%" class="page">
+    <ScrollView width="100%" height="100%" class="home-panel">
+        <WrapLayout orientation="vertical" id="login-container">
+            <!--Add your page content here-->
+            <Image id="login-logo" src="~/images/logo.png"></Image>
+            <StackLayout id="login-form">
+
+                <StackLayout orientation="horizontal" class="form-group"
+                    width="100%">
+                    <Image class="login-icon" src="~/images/icons/wUser.png"></Image>
+                    <TextField [(ngModel)]="login.username" keyboardType="email"
+                        autocapitalizationType="none" autocorrect="false" hint="    Usuario"
+                        class="input-form"></TextField>
+                </StackLayout>
+                <StackLayout orientation="horizontal" style="margin-top: 26dp;"
+                    class="form-group" width="100%">
+                    <Image class="login-icon" src="~/images/icons/wPass.png"></Image>
+                    <TextField [(ngModel)]="login.password" hint=" Contraseña"
+                        secure="true"></TextField>
+                </StackLayout>
+                <Button text="ENTRAR" (tap)="makeLogin()"></Button>
+            </StackLayout>
+        </WrapLayout>
+    </ScrollView>
+</ScrollView>

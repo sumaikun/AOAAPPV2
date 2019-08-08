@@ -1,0 +1,84 @@
+.sidedrawer-icon {
+    margin-left: 12dp;
+    margin-top: 17dp;
+    margin-bottom: 10dp;
+    vertical-align: center;
+}
+
+.app-header{
+    background-color: #437077;
+    height: 53dp;
+}
+
+.android-tabs{
+      background-color: #003057;
+}
+
+#profile-container{
+    background-color: #224A50;
+}
+
+#info-user-container{
+    background-color: white;
+    height: 228dp;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 41dp;
+    border-radius: 25dp;
+}
+
+#info-user-title{
+    color:black;
+    margin-left: 22.5dp;
+    font-weight:bold;
+    margin-top: 19dp;
+    text-decoration: underline;
+    font-family: Segoe UI;
+}
+
+#pic-container{
+
+
+}
+
+#image-container{
+    border-radius: 100%;
+    border-color: black;
+    border-width: 2px;
+    width:148dp;
+    height: 148dp;
+    margin-top: 7dp;
+}
+
+#logo{
+    position:absolute;
+    margin-right: 50%;
+    padding: 25dp;
+    margin-top:-5dp;
+}
+
+#stadistics-container{
+    background-color: white;
+    margin-top: 52dp;
+    height: 100dp;
+    margin-left: 5%;
+    margin-right: 5%;
+    border-radius: 25p;
+}
+
+.info-container{
+    color:#A2A2A2;
+    font-size: 10dp;
+    text-align:center;
+    width: 50%;
+}
+
+.counter{
+    margin-top: 26dp;
+    color:#B51D9E;
+   font-size: 20dp;
+}
+
+.counter-detail{
+    margin-top: 5dp;
+}

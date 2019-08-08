@@ -1,0 +1,7 @@
+<StackLayout orientation="vertical" class="modal-container">
+    <DatePicker [year]="currentYear" [month]="currentMonth" [day]="currentDay"
+        minDate="1970-01-01" (dateChange)="onDateChanged($event)"    maxDate="2100-12-31"></DatePicker>
+    <ListPicker id="cityPicker" [items]="listPickerOffices" [(ngModel)]="selectedListPickerIndex"></ListPicker>
+    <Button text="Filtrar" class="filter-button" (tap)="filterOfficeData()"></Button>
+    <!--<Button class="btn btn-outline" text="Cerrar" (tap)="close()"></Button>-->
+</StackLayout>

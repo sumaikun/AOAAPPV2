@@ -1,10 +1,13 @@
 
 .page{
 	background-image: url("~/images/login.png");
-    background-size: cover;
-	position: fixed; 
+	background-size: cover;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-position: top left;
+	position: fixed;
 	height: 100%;
-    overflow: hidden;
+  overflow: hidden;
 }
 
 

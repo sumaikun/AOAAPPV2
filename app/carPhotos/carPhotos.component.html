@@ -7,7 +7,7 @@
         <StackLayout *tabItem="{title: 'Imagenes Vehículo'}" style="background-color:#224A50">
 
             <FlexboxLayout class="button-item" alignItems="center"
-                justifyContent="space-between">
+                justifyContent="space-between" (tap)="onTakePictureTap($event,'frontCameraImage')">
                 <Image src="~/images/icons/instagram.png" width="30%" height="30%"
                     class="pic-icon"></Image>
                 <Label class="button-label" text="FOTO FRONTAL"></Label>
@@ -15,7 +15,7 @@
             </FlexboxLayout>
 
             <FlexboxLayout class="button-item" alignItems="center"
-                justifyContent="space-between">
+                justifyContent="space-between" (tap)="onTakePictureTap($event,'leftCameraImage')">
                 <Image src="~/images/icons/instagram.png" width="30%" height="30%"
                     class="pic-icon"></Image>
                 <Label class="button-label" text="FOTO IZQUIERDA"></Label>
@@ -23,7 +23,7 @@
             </FlexboxLayout>
 
             <FlexboxLayout class="button-item" alignItems="center"
-                justifyContent="space-between">
+                justifyContent="space-between" (tap)="onTakePictureTap($event,'rightCameraImage')">
                 <Image src="~/images/icons/instagram.png" width="30%" height="30%"
                     class="pic-icon"></Image>
                 <Label class="button-label" text="FOTO DERECHA"></Label>
@@ -31,7 +31,7 @@
             </FlexboxLayout>
 
             <FlexboxLayout class="button-item" alignItems="center"
-                justifyContent="space-between">
+                justifyContent="space-between" (tap)="onTakePictureTap($event,'backCameraImage')">
                 <Image src="~/images/icons/instagram.png" width="30%" height="30%"
                     class="pic-icon"></Image>
                 <Label class="button-label" text="FOTO TRASERA"></Label>

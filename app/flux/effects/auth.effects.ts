@@ -54,6 +54,17 @@ export class AuthEffects {
                   //console.log("first condition");
                   //console.log(data);
 
+                  if(data.datosFlota === null)
+                  {
+                      alert({
+                          title: "error",
+                          message: "El usuario administrador necesita un operario de flota",
+                          okButtonText: "Ok"
+                      });
+
+                      return dispatchArray = [new IsFetching(false)];
+                  }
+
                   let todayDate = new Date().getFullYear() + "-"
                 	+ ( new Date().getMonth() + 1 > 9 ?  new Date().getMonth() + 1 : "0"+ ( new Date().getMonth() + 1 ) )
                 	+ "-" +  ( new Date().getDate()  > 9 ?  new Date().getDate() : "0"+ ( new Date().getDate()  ) ) ;

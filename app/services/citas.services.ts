@@ -22,5 +22,11 @@ export class CitasService {
         return this.http.get<any[]>(url);
     }
 
+    getAppointmentsSiniesterInfo(idAppointment: number){
+      const url = `${this.BASE_URL}/getAppointmentSiniesterInfo/${idAppointment}`;
+      //const url = `${this.BASE_URL}/getAppPreparedAppointmentsDevol/1/${date}`;
+      console.log(url);
+      return this.http.get<any[]>(url);
+    }
 
 }

@@ -1,31 +1,31 @@
 <ScrollView class="page">
-    <StackLayout class="home-panel" orientation="vertical">
+    <StackLayout class="home-panel" *ngIf="readyToShow" orientation="vertical">
         <Label class="info-title" text="INFORMACIÓN DEL SINIESTRO"></Label>
 
         <GridLayout class="info-data info-dataLayout" columns="*,*" rows="auto,auto,auto,auto,auto"
             verticalAlignment="center">
             <Label row="0" col="0" text="Siniestro número"></Label>
-            <Label row="0" col="1" text="10230200033"></Label>
+            <Label row="0" col="1" [text]="readyToShow ? siniesterInfo.numero: '' "></Label>
             <Label row="1" col="0" text="Aseguradora"></Label>
-            <Label row="1" col="1" text="HDI"></Label>
+            <Label row="1" col="1" [text]="readyToShow ? siniesterInfo.aseguradora: '' "></Label>
             <Label row="2" col="0" text="Nombre Asegurado"></Label>
-            <Label row="2" col="1" text="Sergio Urbina"></Label>
+            <Label row="2" col="1" [text]="readyToShow ? siniesterInfo.asegurado_nombre: '' "></Label>
             <Label row="3" col="0" text="Nombre Declarante"></Label>
-            <Label row="3" col="1" text="Jesus Vega"></Label>
+            <Label row="3" col="1" [text]="readyToShow ? siniesterInfo.declarante_nombre: '' "></Label>
             <Label row="4" col="0" text="Placa Siniestrada"></Label>
-            <Label row="4" col="1" text="BCD044"></Label>
+            <Label row="4" col="1" [text]="readyToShow ? siniesterInfo.placaSiniestro: '' "></Label>
         </GridLayout>
         <Label class="info-title" text="INFORMACIÓN DE LA CITA"></Label>
         <GridLayout class="info-data info-dataLayout" columns="*,*" rows="auto,auto,auto,auto,auto"
             verticalAlignment="center">
             <Label row="0" col="0" text="Oficina"></Label>
-            <Label row="0" col="1" text="Bogota - MOROTA"></Label>
+            <Label row="0" col="1" [text]="readyToShow ? siniesterInfo.oficina: '' "></Label>
             <Label row="1" col="0" text="Vehiculo a entregar"></Label>
-            <Label row="1" col="1" text="IXY231"></Label>
+            <Label row="1" col="1" [text]="readyToShow ? siniesterInfo.placaEntregar: '' "></Label>
             <Label row="2" col="0" text="Agendada por"></Label>
-            <Label row="2" col="1" text="Michael Garcer"></Label>
+            <Label row="2" col="1" [text]="readyToShow ? siniesterInfo.agendada_por: '' "></Label>
             <Label row="3" col="0" text="Dias de servicio"></Label>
-            <Label row="3" col="1" text="248"></Label>
+            <Label row="3" col="1" [text]="readyToShow ? siniesterInfo.dias_servicio: '' "></Label>
         </GridLayout>
         <Button id="process-button" text="PROCESAR CITA" (tap)="onButtonTap()"></Button>
 

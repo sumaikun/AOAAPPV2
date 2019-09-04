@@ -6,11 +6,12 @@ import { OfficefiltermodalComponent } from "../modals/officeFilterModal.componen
 import { PlatefiltermodalComponent } from "../modals/plateFilterModal.component";
 import { InfoappointmentComponent } from "../infoAppointmentModal/infoAppointment.component";
 import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
+import { RouterExtensions } from "nativescript-angular/router";
 //flux
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { AppState, selectAppState, selectAuthState, selectCitasState, selectOfficeState } from '../flux/app.states';
-import { GetCitasEntrega , GetCitasDevolucion } from "../flux/actions/citas.actions";
+import { GetCitasEntrega , GetCitasDevolucion , GetCitasSiniestrosInfo } from "../flux/actions/citas.actions";
 import { IsFetching } from '../flux/actions/app.actions';
 
 @Component({
@@ -28,8 +29,11 @@ export class CitasComponent implements OnInit {
 
 	isFetching: boolean | null;
 
-	deliverAppointments : { placa: string , hora: string , asegurado: string, conductor:string , id:number }[] = [];
-	devolutionAppointments : { placa: string , hora: string, conductor: string, asegurado:string, id:number  }[] = [];
+	//deliverAppointments : { placa: string , hora: string , asegurado: string, conductor:string , id:number }[] = [];
+	//devolutionAppointments : { placa: string , hora: string, conductor: string, asegurado:string, id:number  }[] = [];
+
+	deliverAppointments: any[] = [];
+	devolutionAppointments: any[] = [];
 
 	TabTitle: string;
 	infoDate: String;
@@ -45,16 +49,17 @@ export class CitasComponent implements OnInit {
 
 
 	constructor(private page: Page, private modalService: ModalDialogService
-			, private viewContainerRef: ViewContainerRef, private store: Store<AppState>) {
+			, private viewContainerRef: ViewContainerRef, private store: Store<AppState>
+			,	private router: RouterExtensions) {
 				this.getAppState = this.store.select(selectAppState);
 				this.getAppointmentsState = this.store.select(selectCitasState);
 				this.getAuthState = this.store.select(selectAuthState);
 				this.getOfficeState = this.store.select(selectOfficeState);
-
-
 	}
 
 	ngOnInit(): void {
+
+		let self = this;
 
 		this.page.actionBarHidden = true;
 
@@ -67,7 +72,7 @@ export class CitasComponent implements OnInit {
 		this.getAppointmentsState.subscribe( (state) =>
 		{
 
-			//console.log("Citas State");
+			console.log("Citas State");
 			//console.log(state);
 
 			if(state.filteredOffice)
@@ -88,40 +93,43 @@ export class CitasComponent implements OnInit {
 				this.infoDate = state.filteredDate;
 			}
 
+			this.devolutionAppointments = state.DeliverAppointments;
+			this.deliverAppointments = state.DevolAppointments;
 
-			state.DeliverAppointments ? this.deliverAppointments = [] : false;
+			//state.DeliverAppointments ? this.deliverAppointments = [] : false;
 
-			state.DeliverAppointments ?  state.DeliverAppointments.forEach( cita =>{
-					//console.log("entrega");
-					//console.log(cita.placa);
-
+			/*state.DeliverAppointments ?  state.DeliverAppointments.forEach( cita =>{
 					let placa = cita.placa ? cita.placa: "";
 					let hora = cita.hora ? cita.hora.substr(0,5): "";
 					let asegurado = cita.asegurado_nombre ? cita.asegurado_nombre.substr(0,15): "";
 					let conductor = cita.conductor_nombre ?  cita.conductor_nombre.substr(0,15): asegurado;
 					let id = cita.citaid ? cita.citaid:"";
 
-					this.deliverAppointments.push({placa,hora,asegurado,conductor,id});
+					self.deliverAppointments.push({placa,hora,asegurado,conductor,id});
 
 			}) : null ;
+			*/
 
+			//state.DevolAppointments ? this.devolutionAppointments = [] : false;
 
-			state.DevolAppointments ? this.devolutionAppointments = [] : false;
+			//console.log("Devol appointments");
+			//console.log(state.DevolAppointments);
 
-			state.DevolAppointments ? state.DevolAppointments.forEach( cita =>{
+			//state.DevolAppointments ? state.DevolAppointments.forEach( cita =>{
 
 				 //console.log("devolución");
 				 //console.log(cita.placa);
 
-				 let placa = cita.placa ? cita.placa: "";
+				/* let placa = cita.placa ? cita.placa: "";
 				 let hora = cita.hora_devol ? cita.hora_devol.substr(0,5): "";
 				 let asegurado = cita.asegurado_nombre ? cita.asegurado_nombre.substr(0,15): "";
 				 let conductor = cita.conductor_nombre ?  cita.conductor_nombre.substr(0,15): asegurado;
 				 let id = cita.citaid ? cita.citaid:"";
 
-				 this.devolutionAppointments.push({placa,hora,asegurado,conductor,id});
+				 self.devolutionAppointments.push({placa,hora,asegurado,conductor,id});
 
-			}) : null;
+			}) : null;*/
+
 
 		});
 
@@ -157,11 +165,12 @@ export class CitasComponent implements OnInit {
 
 			this.modalService.showModal(OfficefiltermodalComponent, this.options).then((result: any) => {
 
-				console.log("after modal");
-				console.log(result);
+				//console.log("after modal");
+				//console.log(result);
 
 				if(result)
 				{
+
 					this.store.dispatch(new IsFetching(true));
 
 					this.store.dispatch(new GetCitasEntrega({office:result.office,
@@ -191,10 +200,55 @@ export class CitasComponent implements OnInit {
 
 
 	onItemTap(args: ItemEventData): void {
+			/*console.log("dato de args");
 			console.log(args);
-      console.log('Item with index: ' + args.index + ' tapped');
-			this.modalService.showModal(InfoappointmentComponent, this.options);
 
+			console.log('Item with index: ' + args.index + ' tapped');*/
+
+			//example of service
+			this.store.dispatch(new GetCitasSiniestrosInfo({
+				idAppointment:134083
+			}));
+			this.modalService.showModal(InfoappointmentComponent, this.options);
   }
+
+	onDeliverTap(args: ItemEventData): void {
+		//console.log(this.deliverAppointments[args.index]);
+		this.store.dispatch(new GetCitasSiniestrosInfo({
+			idAppointment:this.deliverAppointments[args.index].citaid
+		}));
+		this.modalService.showModal(InfoappointmentComponent, this.options).then((result: any) => {
+			let self = this;
+			console.log("deliver tap");
+			console.log(result);
+			if(result)
+			{
+				setTimeout( function(){
+						self.router.navigateByUrl('/fotos'); 
+			  }, 300);
+			}
+
+		});
+	}
+
+	onDevolutionTap(args: ItemEventData): void {
+		//console.log(this.devolutionAppointments[args.index]);
+		this.store.dispatch(new GetCitasSiniestrosInfo({
+			idAppointment:this.devolutionAppointments[args.index].citaid
+		}));
+		this.modalService.showModal(InfoappointmentComponent, this.options).then((result: any) => {
+			let self = this;
+			console.log("devolution tap");
+			console.log(result);
+			if(result)
+			{
+				setTimeout( function(){
+						self.router.navigateByUrl('/fotos');
+			  }, 300);
+
+			}
+		});
+
+	}
 
 }

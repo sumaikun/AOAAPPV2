@@ -5,13 +5,15 @@ export interface State {
     DevolAppointments: any[],
     filteredOffice: string,
     filteredDate: string,
+    siniesterInfo: any;
 }
 
 export const initialState: State = {
     DeliverAppointments: [],
     DevolAppointments: [],
     filteredOffice: null,
-    filteredDate: null
+    filteredDate: null,
+    siniesterInfo: null
 };
 
 export function reducer(state = initialState, action: All): State {
@@ -60,6 +62,18 @@ export function reducer(state = initialState, action: All): State {
       state = {
         ...state,
         DevolAppointments: action.payload
+      };
+
+      //console.log("citas de devolución");
+      //console.log(state);
+
+      return state;
+    }
+    case CitasActionTypes.SET_CITAS_SINI_INFO: {
+
+      state = {
+        ...state,
+        siniesterInfo: action.payload
       };
 
       //console.log("citas de devolución");

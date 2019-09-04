@@ -18,6 +18,8 @@ import {
   GetCitasDevolucion,
   SetCitasEntrega,
   SetCitasDevolucion,
+  GetCitasSiniestrosInfo,
+  SetCitasSiniestrosInfo,
   CitasActionTypes
 } from '../actions/citas.actions';
 
@@ -47,7 +49,7 @@ export class CitasEffects {
                     dispatchArray = [new SetCitasEntrega(data)];
                 }
                 else{
-                    
+
                     dispatchArray = [new SetCitasEntrega(data),new IsFetching(false)];
                 }
 
@@ -105,5 +107,45 @@ export class CitasEffects {
 
            })
          );
+
+
+         @Effect({ dispatch: true })
+         getAppointmentSiniesterInfo$ = this.actions$.pipe(
+             ofType(CitasActionTypes.GET_CITAS_SINI_INFO),
+             mergeMap((action:any) =>{
+               //console.log("in Citas Effects");
+               //console.log(action);
+               return  this.citasService.getAppointmentsSiniesterInfo(action.payload.idAppointment).pipe(
+                 switchMap(data =>
+                   {
+                      //console.log("Obtener información del siniestro");
+                      //console.log(data);
+
+                      let dispatchArray;
+
+                      if(action.payload.keepFetching)
+                      {
+                        dispatchArray = [new SetCitasSiniestrosInfo(data)];
+                      }
+                      else
+                      {
+                         dispatchArray = [new SetCitasSiniestrosInfo(data),new IsFetching(false)];
+                      }
+
+                      return dispatchArray;
+                   }),
+                 catchError(error =>
+                 {
+                   console.log(error);
+                   alert({
+                       title: "error",
+                       message: "Hubo un error buscando la, verifique el servidor o la conexión a internet",
+                       okButtonText: "Ok"
+                   });
+                    return of( new IsFetching(false) );
+                 }));
+
+              })
+            );
 
 }

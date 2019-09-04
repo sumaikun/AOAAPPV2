@@ -26,21 +26,21 @@
         androidSelectedTabHighlightColor="#004857"
         (selectedIndexChanged)="onSelectedIndexChanged($event)">
         <StackLayout *tabItem="{title: 'Citas entrega'}" style="background-color:#224A50">
-            <ListView class="list-group" [items]="deliverAppointments" (itemTap)="onItemTap($event)"
+            <ListView class="list-group" [items]="deliverAppointments" (itemTap)="onDeliverTap($event)"
                 style="height:1250px">
                 <ng-template let-cita="item">
                     <FlexboxLayout class="cita-item-container">
                         <FlexboxLayout class="cita-item" justifyContent="space-between"
                             alignItems="center">
                             <Label [text]="cita.placa" class="label-placa" flexGrow="1"></Label>
-                            <Label [text]="cita.hora" class="label-placa" flexGrow="2"></Label>
+                            <Label [text]="cita.hora ? cita.hora.substr(0,5):'' " class="label-placa" flexGrow="2"></Label>
                             <StackLayout orientation="vertical" class="info-container">
                                 <StackLayout orientation="horizontal">
                                     <Image horizontalAlignment="left" width="19dp"
                                         height="19dp" class="info-icon" src="~/images/icons/driver.png"></Image>
                                     <Label text="Conductor: " style="font-family:Roboto-Medium;"
                                         class="asegurado-label" flexGrow="1"></Label>
-                                    <Label [text]="cita.conductor" class="asegurado-label"
+                                    <Label [text]="cita.conductor_nombre ?  cita.conductor_nombre.substr(0,15): '' " class="asegurado-label"
                                         flexGrow="1"></Label>
                                 </StackLayout>
                                 <StackLayout style="margin-top:10dp;"
@@ -50,7 +50,7 @@
                                     </Image>
                                     <Label text="Asegurado: " style="font-family:Roboto-Medium;"
                                         class="asegurado-label" flexGrow="2"></Label>
-                                    <Label [text]="cita.asegurado" class="asegurado-label"
+                                    <Label [text]="cita.asegurado_nombre ? cita.asegurado_nombre.substr(0,15): '' " class="asegurado-label"
                                         flexGrow="2"></Label>
                                 </StackLayout>
                             </StackLayout>
@@ -61,21 +61,21 @@
         </StackLayout>
         <StackLayout *tabItem="{title: 'Citas de devolución'}" style="background-color:#224A50">
 
-          <ListView class="list-group" [items]="devolutionAppointments" (itemTap)="onItemTap($event)"
+          <ListView class="list-group" [items]="devolutionAppointments" (itemTap)="onDevolutionTap($event)"
               style="height:1250px">
               <ng-template let-cita="item">
                   <FlexboxLayout class="cita-item-container">
                       <FlexboxLayout class="cita-item" justifyContent="space-between"
                           alignItems="center">
                           <Label [text]="cita.placa" class="label-placa" flexGrow="1"></Label>
-                          <Label [text]="cita.hora" class="label-placa" flexGrow="2"></Label>
+                          <Label [text]="cita.hora_devol ? cita.hora_devol.substr(0,5): '' " class="label-placa" flexGrow="2"></Label>
                           <StackLayout orientation="vertical" class="info-container">
                               <StackLayout orientation="horizontal">
                                   <Image horizontalAlignment="left" width="19dp"
                                       height="19dp" class="info-icon" src="~/images/icons/driver.png"></Image>
                                   <Label text="Conductor: " style="font-family:Roboto-Medium;"
                                       class="asegurado-label" flexGrow="1"></Label>
-                                  <Label [text]="cita.conductor" class="asegurado-label"
+                                  <Label [text]="cita.conductor_nombre ?  cita.conductor_nombre.substr(0,15): '' " class="asegurado-label"
                                       flexGrow="1"></Label>
                               </StackLayout>
                               <StackLayout style="margin-top:10dp;"
@@ -85,7 +85,7 @@
                                   </Image>
                                   <Label text="Asegurado: " style="font-family:Roboto-Medium;"
                                       class="asegurado-label" flexGrow="2"></Label>
-                                  <Label [text]="cita.asegurado" class="asegurado-label"
+                                  <Label [text]="cita.asegurado_nombre ? cita.asegurado_nombre.substr(0,15): '' " class="asegurado-label"
                                       flexGrow="2"></Label>
                               </StackLayout>
                           </StackLayout>

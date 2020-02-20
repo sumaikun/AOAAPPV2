@@ -1,0 +1,28 @@
+<Loading *ngIf="isFetching"></Loading>
+<StackLayout *ngIf="!isFetching" orientation="vertical" id="page-container">
+    
+
+    <ScrollView orientation="vertical" height="100%">
+        
+        <PageContainer pageTitle="{{TabTitle}}">
+            
+            <StackLayout height="100%" >
+
+                <StackLayout class="question-container">
+                        <StackLayout orientation="horizontal" height="55">
+                            
+                                <Label text="1. " class="questionIndex" verticalAlignment="center"></Label>
+                                <Label textWrap="true" width="90%" text="Califique de 1 a 5 la información y orientación recibida en el primer contacto por el personal de servicio: " verticalAlignment="center"></Label>
+
+                        </StackLayout>
+                        <ListPicker [items]="items" class="picker"></ListPicker>
+                </StackLayout>
+
+                
+
+                <Button text="REGISTRAR" id="button"></Button>
+
+            </StackLayout>
+        </PageContainer>
+    </ScrollView>
+</StackLayout>

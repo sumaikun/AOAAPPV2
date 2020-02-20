@@ -3,7 +3,7 @@ import { Component, OnInit, ViewContainerRef } from "@angular/core";
 import { ModalDialogService, ModalDialogOptions } from "nativescript-angular/modal-dialog";
 import { Page } from "tns-core-modules/ui/page";
 import { OfficefiltermodalComponent } from "../modals/officeFilterModal.component";
-import { PlatefiltermodalComponent } from "../modals/plateFilterModal.component";
+//import { PlatefiltermodalComponent } from "../modals/plateFilterModal.component";
 import { InfoappointmentComponent } from "../infoAppointmentModal/infoAppointment.component";
 import { SelectedIndexChangedEventData } from "tns-core-modules/ui/tab-view";
 import { RouterExtensions } from "nativescript-angular/router";
@@ -13,6 +13,12 @@ import { Observable } from 'rxjs/Observable';
 import { AppState, selectAppState, selectAuthState, selectCitasState, selectOfficeState } from '../flux/app.states';
 import { GetCitasEntrega , GetCitasDevolucion , GetCitasSiniestrosInfo } from "../flux/actions/citas.actions";
 import { IsFetching } from '../flux/actions/app.actions';
+
+//app Singleton
+import { properties } from '../properties';
+
+//moment
+import * as moment from 'moment';
 
 @Component({
 	selector: "Citas",
@@ -29,8 +35,6 @@ export class CitasComponent implements OnInit {
 
 	isFetching: boolean | null;
 
-	//deliverAppointments : { placa: string , hora: string , asegurado: string, conductor:string , id:number }[] = [];
-	//devolutionAppointments : { placa: string , hora: string, conductor: string, asegurado:string, id:number  }[] = [];
 
 	deliverAppointments: any[] = [];
 	devolutionAppointments: any[] = [];
@@ -39,6 +43,8 @@ export class CitasComponent implements OnInit {
 	infoDate: String;
 	infoOffice: string;
 
+	isAdmin: boolean;
+
 	offices: any[] = [];
 
 	options: ModalDialogOptions = {
@@ -46,6 +52,8 @@ export class CitasComponent implements OnInit {
 			fullscreen: false,
 			context: {}
 	};
+
+	tabSelectedIndex: number;
 
 
 	constructor(private page: Page, private modalService: ModalDialogService
@@ -59,195 +67,252 @@ export class CitasComponent implements OnInit {
 
 	ngOnInit(): void {
 
-		let self = this;
+		console.log("init appointment component",localStorage.getItem("selectedTab"))
 
+		if(localStorage.getItem("selectedTab"))
+		{
+			this.tabSelectedIndex = Number(localStorage.getItem("selectedTab"))
+		}
+		else{
+			this.tabSelectedIndex = 0
+		}		
+
+		
 		this.page.actionBarHidden = true;
 
+		this.getAuthState.subscribe( (state) =>
+		{
+			//console.log("authState",state)
+			//let officeFiltered = this.offices.filter( data => data.id === state.userData.datosFlota.oficina );
+			if(state.userData.isAdmin)
+			{
+				this.isAdmin = true;
+			}
+			else{
+				this.isAdmin = false;
+			}
+			
+		});
 
 		this.getAppState.subscribe( (state) =>
 		{
-				this.isFetching = state.isFetching;
+			this.isFetching = state.isFetching;
+		});
+
+		this.getOfficeState.subscribe( (state) =>
+		{
+			//console.log("office State",state);
+			
+			this.offices = state.userOffices;
+			
+			//console.log("current info",this.infoOffice)
+
+			if(!this.infoOffice)
+			{
+				this.infoOffice = state.userOffices[0].name;
+			}
+			
+			
 		});
 
 		this.getAppointmentsState.subscribe( (state) =>
 		{
 
-			console.log("Citas State");
-			//console.log(state);
+			//console.log("Citas State",state);
+			 
 
-			if(state.filteredOffice)
+			if(state.filteredOffice && state.filteredDate)
 			{
-				//console.log("filteredOffice "+state.filteredOffice);
+				console.log("filteredOffice "+state.filteredOffice,state.filteredDate);
 				let officeFiltered = this.offices.filter( data => data.id === state.filteredOffice );
 				//console.log(officeFiltered);
 				if(officeFiltered[0])
 				{
 					//when filter
-					this.infoOffice = officeFiltered[0].nombre;
+					this.infoOffice = officeFiltered[0].name;
 				}
 
-			}
-
-			if(state.filteredDate)
-			{
 				this.infoDate = state.filteredDate;
+
+
+				this.deliverAppointments = state.DeliverAppointments.filter( data =>{ return data.oficina === officeFiltered[0].id  &&
+					moment(data.fecha).format("YYYY-MM-DD") === moment(this.infoDate.toString()).format("YYYY-MM-DD") })
+
+				this.devolutionAppointments = state.DevolAppointments.filter( data => {
+					//console.log(moment(data.fec_devolucion).format("YYYY-MM-DD"))
+					return data.oficina === officeFiltered[0].id &&
+					moment(data.fec_devolucion).format("YYYY-MM-DD") === moment(this.infoDate.toString()).format("YYYY-MM-DD") })
+
+			}
+			else{
+				
+				//console.log(moment(new Date()).format("YYYY-MM-DD"))
+
+				console.log("autofilter")
+
+				console.log(state)
+
+				this.deliverAppointments = state.DeliverAppointments.filter( data =>{ 
+					
+					console.log(data.oficina,this.offices[0].id)
+
+					console.log(moment(data.fecha).format("YYYY-MM-DD"),moment(new Date()).format("YYYY-MM-DD"))
+					
+					return data.oficina === this.offices[0].id  &&
+					moment(data.fecha).format("YYYY-MM-DD") === moment(new Date()).format("YYYY-MM-DD") 
+				
+				})
+
+				this.devolutionAppointments = state.DevolAppointments.filter( data => {
+					//console.log(moment(data.fec_devolucion).format("YYYY-MM-DD"))
+					return data.oficina === this.offices[0].id &&
+					moment(data.fec_devolucion).format("YYYY-MM-DD") === moment(new Date()).format("YYYY-MM-DD") })				
+				
+				//console.log(this.devolutionAppointments,this.deliverAppointments)
+
+				this.infoDate = new Date().getFullYear() + "-"
+				+ ( new Date().getMonth() + 1 > 9 ?  new Date().getMonth() + 1 : "0"+ ( new Date().getMonth() + 1 ) )
+				+ "-" +  ( new Date().getDate()  > 9 ?  new Date().getDate() : "0"+ ( new Date().getDate()  ) ) ;
+				
 			}
 
-			this.devolutionAppointments = state.DeliverAppointments;
-			this.deliverAppointments = state.DevolAppointments;
 
-			//state.DeliverAppointments ? this.deliverAppointments = [] : false;
-
-			/*state.DeliverAppointments ?  state.DeliverAppointments.forEach( cita =>{
-					let placa = cita.placa ? cita.placa: "";
-					let hora = cita.hora ? cita.hora.substr(0,5): "";
-					let asegurado = cita.asegurado_nombre ? cita.asegurado_nombre.substr(0,15): "";
-					let conductor = cita.conductor_nombre ?  cita.conductor_nombre.substr(0,15): asegurado;
-					let id = cita.citaid ? cita.citaid:"";
-
-					self.deliverAppointments.push({placa,hora,asegurado,conductor,id});
-
-			}) : null ;
-			*/
-
-			//state.DevolAppointments ? this.devolutionAppointments = [] : false;
-
-			//console.log("Devol appointments");
-			//console.log(state.DevolAppointments);
-
-			//state.DevolAppointments ? state.DevolAppointments.forEach( cita =>{
-
-				 //console.log("devolución");
-				 //console.log(cita.placa);
-
-				/* let placa = cita.placa ? cita.placa: "";
-				 let hora = cita.hora_devol ? cita.hora_devol.substr(0,5): "";
-				 let asegurado = cita.asegurado_nombre ? cita.asegurado_nombre.substr(0,15): "";
-				 let conductor = cita.conductor_nombre ?  cita.conductor_nombre.substr(0,15): asegurado;
-				 let id = cita.citaid ? cita.citaid:"";
-
-				 self.devolutionAppointments.push({placa,hora,asegurado,conductor,id});
-
-			}) : null;*/
-
-
+			//this.devolutionAppointments = state.DevolAppointments;
+			//this.deliverAppointments = state.DeliverAppointments;
+			
 		});
-
-
-		this.getOfficeState.subscribe( (state) =>
-		{
-			//console.log(state);
-			this.offices = state.userOffices;
-		});
-
-		this.getAuthState.subscribe( (state) =>
-		{
-			//console.log(this.offices);
-			//console.log(state.userData.datosFlota.oficina);
-			let officeFiltered = this.offices.filter( data => data.id === state.userData.datosFlota.oficina );
-			//console.log(officeFiltered);
-			//Default by Auth
-			this.infoOffice = officeFiltered[0].nombre;
-		});
-
 
 		this.TabTitle = "Citas de entrega";
 
-		this.infoDate = new Date().getFullYear() + "-"
-		+ ( new Date().getMonth() + 1 > 9 ?  new Date().getMonth() + 1 : "0"+ ( new Date().getMonth() + 1 ) )
-		+ "-" +  ( new Date().getDate()  > 9 ?  new Date().getDate() : "0"+ ( new Date().getDate()  ) ) ;
-
+		
 
 
 	}
 
-	officeSearch(): void {
+	officeSearch(): void {		
 
-			this.modalService.showModal(OfficefiltermodalComponent, this.options).then((result: any) => {
+		this.modalService.showModal(OfficefiltermodalComponent, this.options).then((result: any) => {
 
-				//console.log("after modal");
-				//console.log(result);
+			//console.log("after modal");
+			//console.log(result);
 
-				if(result)
-				{
+			if(result)
+			{
+				console.log("filtered result",result)
 
-					this.store.dispatch(new IsFetching(true));
+				this.store.dispatch(new IsFetching(true));
 
-					this.store.dispatch(new GetCitasEntrega({office:result.office,
-						date:result.date, keepFetching:true
-					}));
+				this.store.dispatch(new GetCitasEntrega({office:result.office,
+					date:result.date, keepFetching:true
+				}));
 
-					this.store.dispatch(new GetCitasDevolucion({office:result.office,
-						date:result.date
-					}));
-				}
+				this.store.dispatch(new GetCitasDevolucion({office:result.office,
+					date:result.date
+				}));
+
+				this.tabSelectedIndex = Number(localStorage.getItem("selectedTab")) ? Number(localStorage.getItem("selectedTab")) : 0
+			}
 
 
 
-			});
+		});
 	}
 
-	plateSearch(): void {
+	/*plateSearch(): void {
 
 			this.modalService.showModal(PlatefiltermodalComponent, this.options).then((result: any) => {
 
 			});
-	}
+	}*/
 
 	onSelectedIndexChanged(args: SelectedIndexChangedEventData) {
 		this.TabTitle = args.newIndex == 0 ? "Citas de entrega":"Citas de devolución";
-	}
-
-
-	onItemTap(args: ItemEventData): void {
-			/*console.log("dato de args");
-			console.log(args);
-
-			console.log('Item with index: ' + args.index + ' tapped');*/
-
-			//example of service
-			this.store.dispatch(new GetCitasSiniestrosInfo({
-				idAppointment:134083
-			}));
-			this.modalService.showModal(InfoappointmentComponent, this.options);
-  }
+		localStorage.setItem("selectedTab",args.newIndex.toString())
+	}			
+  
 
 	onDeliverTap(args: ItemEventData): void {
 		//console.log(this.deliverAppointments[args.index]);
+
+		this.store.dispatch(new IsFetching(true));
+
+		const cb = (success , error) => {
+
+			if(success)
+			{
+				this.tabSelectedIndex = 0					
+
+				this.options.context.appointment = this.deliverAppointments[args.index].citaid
+				//console.log("options",this.options)
+				this.modalService.showModal(InfoappointmentComponent, this.options).then((result: any) => {
+					let self = this;
+					console.log("deliver tap");
+					//console.log(result);
+					if(result)
+					{
+						setTimeout( function(){
+							  self.router.navigate(["/fotos", 1]);
+								//self.router.navigateByUrl('/fotos');
+					  }, 300);
+					}
+		
+				});
+			}
+			if(error){
+				console.log("error callback injected in singleton")
+			}
+		}
+
+		properties.addCb(cb)
+
 		this.store.dispatch(new GetCitasSiniestrosInfo({
 			idAppointment:this.deliverAppointments[args.index].citaid
 		}));
-		this.modalService.showModal(InfoappointmentComponent, this.options).then((result: any) => {
-			let self = this;
-			console.log("deliver tap");
-			console.log(result);
-			if(result)
-			{
-				setTimeout( function(){
-						self.router.navigateByUrl('/fotos'); 
-			  }, 300);
-			}
 
-		});
+		
 	}
 
 	onDevolutionTap(args: ItemEventData): void {
-		//console.log(this.devolutionAppointments[args.index]);
-		this.store.dispatch(new GetCitasSiniestrosInfo({
-			idAppointment:this.devolutionAppointments[args.index].citaid
-		}));
-		this.modalService.showModal(InfoappointmentComponent, this.options).then((result: any) => {
-			let self = this;
-			console.log("devolution tap");
-			console.log(result);
-			if(result)
-			{
-				setTimeout( function(){
-						self.router.navigateByUrl('/fotos');
-			  }, 300);
+		console.log(this.devolutionAppointments[args.index]);		
 
+		const selectedCitaid = this.devolutionAppointments[args.index].citaid
+
+		console.log("devolution tap",selectedCitaid)
+
+		this.store.dispatch(new IsFetching(true));
+
+		const cb = (success , error) => {
+			if(success)
+			{
+				this.tabSelectedIndex = 1
+				this.options.context.appointment = selectedCitaid
+				this.modalService.showModal(InfoappointmentComponent, this.options).then((result: any) => {
+					let self = this;
+					console.log("devolution tap");
+					//console.log(result);
+					if(result)
+					{
+						setTimeout( function(){
+								self.router.navigate(["/fotos", 2]);
+								//self.router.navigateByUrl('/fotos');
+					  }, 300);
+		
+					}
+				});
 			}
-		});
+			if(error){
+				console.log("error callback injected in singleton")
+			}
+		}
+
+		const payload = {
+			idAppointment:selectedCitaid
+		}
+
+		properties.addCb(cb)
+
+		this.store.dispatch(new GetCitasSiniestrosInfo(payload));		
+		
 
 	}
 

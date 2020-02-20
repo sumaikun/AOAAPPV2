@@ -1,46 +1,127 @@
-<StackLayout orientation="vertical">
+<Loading *ngIf="isFetching"></Loading>
+<StackLayout *ngIf="!isFetching" orientation="vertical">
     <PageContainer pageTitle="Fotos">
 
     </PageContainer>
     <TabView androidTabsPosition="bottom" tabBackgroundColor="#003057"
         androidSelectedTabHighlightColor="#004857">
-        <StackLayout *tabItem="{title: 'Imagenes Vehículo'}" style="background-color:#224A50">
+        <ScrollView orientation="vertical" height="100%" *tabItem="{title: 'Imagenes Vehículo'}"
+        style="background-color:#224A50">
+          <StackLayout >
 
-            <FlexboxLayout class="button-item" alignItems="center"
-                justifyContent="space-between" (tap)="onTakePictureTap($event,'frontCameraImage')">
-                <Image src="~/images/icons/instagram.png" width="30%" height="30%"
-                    class="pic-icon"></Image>
-                <Label class="button-label" text="FOTO FRONTAL"></Label>
-                <Image class="car-icon" src="~/images/icons/frontSide.png"></Image>
-            </FlexboxLayout>
+              <Button *ngIf = " frontCameraImage && leftCameraImage && rightCameraImage
+                && backCameraImage "  text="Guardar Imagenes" (tap)="sendPics()"></Button>
 
-            <FlexboxLayout class="button-item" alignItems="center"
-                justifyContent="space-between" (tap)="onTakePictureTap($event,'leftCameraImage')">
-                <Image src="~/images/icons/instagram.png" width="30%" height="30%"
-                    class="pic-icon"></Image>
-                <Label class="button-label" text="FOTO IZQUIERDA"></Label>
-                <Image class="car-icon" src="~/images/icons/leftSide.png"></Image>
-            </FlexboxLayout>
+              <Button *ngIf = " mode == 2  " text="Mostrar imagenes de entrega" (tap)="showPics()"></Button>
 
-            <FlexboxLayout class="button-item" alignItems="center"
-                justifyContent="space-between" (tap)="onTakePictureTap($event,'rightCameraImage')">
-                <Image src="~/images/icons/instagram.png" width="30%" height="30%"
-                    class="pic-icon"></Image>
-                <Label class="button-label" text="FOTO DERECHA"></Label>
-                <Image class="car-icon" src="~/images/icons/rightSide.png"></Image>
-            </FlexboxLayout>
+              <FlexboxLayout class="button-item" alignItems="center"
+                  justifyContent="space-between" (tap)="onTakePictureTap($event,'frontCameraImage')">
+                  <Image *ngIf="frontCameraImage" [src]="frontCameraImage" (doubleTap)="verifyThisImage(frontCameraImage)"  ></Image>
+                  <Image *ngIf="!frontCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                      class="pic-icon"></Image>
+                  <Label class="button-label" text="FOTO FRONTAL"></Label>
+                  <Image class="car-icon" src="~/images/icons/frontSide.png"></Image>
+              </FlexboxLayout>
 
-            <FlexboxLayout class="button-item" alignItems="center"
-                justifyContent="space-between" (tap)="onTakePictureTap($event,'backCameraImage')">
-                <Image src="~/images/icons/instagram.png" width="30%" height="30%"
-                    class="pic-icon"></Image>
-                <Label class="button-label" text="FOTO TRASERA"></Label>
-                <Image class="car-icon" src="~/images/icons/backSide.png"></Image>
-            </FlexboxLayout>
+              <Image *ngIf = " mode == 2 && showPictures " class="car-icon image-taken"
+               [src]="prevFrontImage" decodeWidth="40" decodeWidth="40" loadMode="async"
+               (doubleTap)="verifyThisImage(prevFrontImage)"
+               ></Image>
 
-        </StackLayout>
-        <StackLayout *tabItem="{title: 'Imagenes Documentos'}" style="background-color:#224A50">
+              <FlexboxLayout class="button-item" alignItems="center"
+                  justifyContent="space-between" (tap)="onTakePictureTap($event,'leftCameraImage')">
+                  <Image *ngIf="leftCameraImage" [src]="leftCameraImage" (doubleTap)="verifyThisImage(leftCameraImage)"  ></Image>
+                  <Image *ngIf="!leftCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                      class="pic-icon"></Image>
+                  <Label class="button-label" text="FOTO IZQUIERDA"></Label>
+                  <Image class="car-icon" src="~/images/icons/leftSide.png"></Image>
+              </FlexboxLayout>
 
-        </StackLayout>
+              <Image *ngIf = " mode == 2 && showPictures  " class="car-icon image-taken"
+               [src]="this.prevLeftImage" loadMode="async" decodeWidth="40" decodeWidth="40"
+               (doubleTap)="verifyThisImage(this.prevLeftImage)"></Image>
+
+              <FlexboxLayout class="button-item" alignItems="center"
+                  justifyContent="space-between" (tap)="onTakePictureTap($event,'rightCameraImage')">
+                  <Image *ngIf="rightCameraImage" [src]="rightCameraImage" (doubleTap)="verifyThisImage(rightCameraImage)"  ></Image>
+                  <Image *ngIf="!rightCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                      class="pic-icon"></Image>
+                  <Label class="button-label" text="FOTO DERECHA"></Label>
+                  <Image class="car-icon" src="~/images/icons/rightSide.png"></Image>
+              </FlexboxLayout>
+
+              <Image *ngIf = " mode == 2 && showPictures  "  [hidden] = "showPictures == false" class="car-icon image-taken"
+               [src]="prevRightImage" loadMode="async" decodeWidth="40" decodeWidth="40"
+              (doubleTap)="verifyThisImage(prevRightImage)"
+               ></Image>
+
+              <FlexboxLayout class="button-item" alignItems="center"
+                  justifyContent="space-between" (tap)="onTakePictureTap($event,'backCameraImage')">
+                  <Image *ngIf="backCameraImage" [src]="backCameraImage" (doubleTap)="verifyThisImage(backCameraImage)"  ></Image>
+                  <Image *ngIf="!backCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                      class="pic-icon"></Image>
+                  <Label class="button-label" text="FOTO TRASERA"></Label>
+                  <Image class="car-icon" src="~/images/icons/backSide.png"></Image>
+              </FlexboxLayout>
+
+              <Image *ngIf = " mode == 2 && showPictures  "  [hidden] = "showPictures == false" class="car-icon image-taken"
+               [src]="prevBackImage" loadMode="async" decodeWidth="40" decodeWidth="40"
+               (doubleTap)="verifyThisImage(prevBackImage)"
+               ></Image>
+
+              <FlexboxLayout class="button-item" alignItems="center"
+                  justifyContent="space-between" (tap)="onTakePictureTap($event,'backCameraImage')">
+                  <Image *ngIf="odometerCameraImage" [src]="backCameraImage" (doubleTap)="verifyThisImage(backCameraImage)"  ></Image>
+                  <Image *ngIf="!odometerCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                      class="pic-icon"></Image>
+                  <Label class="button-label" text="ODOMETRO"></Label>
+                  <Image class="car-icon" src="~/images/icons/odometer.png"></Image>
+              </FlexboxLayout>
+
+              <Image *ngIf = " mode == 2 && showPictures  "  [hidden] = "showPictures == false" class="car-icon image-taken"
+              [src]="prevOdometerImage"  loadMode="async" decodeWidth="40" decodeWidth="40"
+              (doubleTap)="verifyThisImage(prevOdometerImage)"></Image>
+
+            </StackLayout>
+          </ScrollView>
+          <ScrollView orientation="vertical" height="100%" *tabItem="{title: 'Imagenes Documentos'}"
+           style="background-color:#224A50">
+            <StackLayout>
+
+              <FlexboxLayout class="button-item" alignItems="center"
+                  justifyContent="space-between" (tap)="onTakePictureTap($event,'contractImage')">
+                  <Image *ngIf="frontCameraImage" [src]="contractImage" (doubleTap)="verifyThisImage(contractImage)"  >
+                  </Image>
+                  <Image *ngIf="!frontCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                      class="pic-icon"></Image>
+                  <Label class="button-label" text="CONTRATO"></Label>
+                  <Image class="car-icon" src="~/images/icons/document.jpg"></Image>
+              </FlexboxLayout>
+
+              <FlexboxLayout class="button-item" alignItems="center"
+                  justifyContent="space-between" (tap)="onTakePictureTap($event,'checkCameraImage')">
+                  <Image *ngIf="frontCameraImage" [src]="checkCameraImage" (doubleTap)="verifyThisImage(checkCameraImage)"  ></Image>
+                  <Image *ngIf="!frontCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                      class="pic-icon"></Image>
+                  <Label class="button-label" text="LISTA DE CHEQUEO"></Label>
+                  <Image class="car-icon" src="~/images/icons/document.jpg"></Image>
+              </FlexboxLayout>
+
+              <FlexboxLayout class="button-item" alignItems="center"
+                  justifyContent="space-between" (tap)="onTakePictureTap($event,'inventoryCameraImage')">
+                  <Image *ngIf="frontCameraImage" [src]="inventoryCameraImage" (doubleTap)="verifyThisImage(inventoryCameraImage)"  ></Image>
+                  <Image *ngIf="!frontCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                      class="pic-icon"></Image>
+                  <Label class="button-label" text="IMAGEN INVENTARIO"></Label>
+                  <Image class="car-icon" src="~/images/icons/document.jpg"></Image>
+              </FlexboxLayout>
+
+              <!--
+              <Image *ngIf = " mode == 2  && showPictures " class="car-icon image-taken"
+               src="https://app.aoacolombia.com/Control/operativo/siniestro/185/1850715/15677007113374671192359385952227.jpg"></Image>
+               -->
+
+            </StackLayout>
+          </ScrollView>
     </TabView>
 </StackLayout>

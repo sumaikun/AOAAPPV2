@@ -3,14 +3,14 @@
     <PageContainer pageTitle="{{TabTitle}}">
         <StackLayout orientation="vertical">
             <StackLayout class="search-container" orientation="horizontal">
-                <Image (tap)="officeSearch()"  horizontalAlignment="left" id="location-icon"
+                <Image  horizontalAlignment="left" id="location-icon"
                     src="~/images/icons/location2.png"></Image>
                 <StackLayout id="search-Container-text" horizontalAlignment="center"
                     orientation="vertical">
                     <Label text="Oficina: {{infoOffice}} "></Label>
                     <Label [text]="infoDate" class="date-label"></Label>
                 </StackLayout>
-                <Image (tap)="plateSearch()"  id="search-icon" horizontalAlignment="right"
+                <Image (tap)="officeSearch()"  id="search-icon" horizontalAlignment="right"
                     src="~/images/icons/lupa.png"></Image>
             </StackLayout>
             <FlexboxLayout justifyContent="space-between" alignItems="center"
@@ -24,6 +24,9 @@
 
     <TabView androidTabsPosition="bottom" tabBackgroundColor="#003057"
         androidSelectedTabHighlightColor="#004857"
+        id="tabviewContainer"
+        color="#ffffff"
+        [selectedIndex]="tabSelectedIndex"
         (selectedIndexChanged)="onSelectedIndexChanged($event)">
         <StackLayout *tabItem="{title: 'Citas entrega'}" style="background-color:#224A50">
             <ListView class="list-group" [items]="deliverAppointments" (itemTap)="onDeliverTap($event)"
@@ -40,7 +43,7 @@
                                         height="19dp" class="info-icon" src="~/images/icons/driver.png"></Image>
                                     <Label text="Conductor: " style="font-family:Roboto-Medium;"
                                         class="asegurado-label" flexGrow="1"></Label>
-                                    <Label [text]="cita.conductor_nombre ?  cita.conductor_nombre.substr(0,15): '' " class="asegurado-label"
+                                    <Label [text]="cita.conductor ?  cita.conductor.substr(0,15): '' " class="asegurado-label"
                                         flexGrow="1"></Label>
                                 </StackLayout>
                                 <StackLayout style="margin-top:10dp;"
@@ -59,6 +62,7 @@
                 </ng-template>
             </ListView>
         </StackLayout>
+
         <StackLayout *tabItem="{title: 'Citas de devolución'}" style="background-color:#224A50">
 
           <ListView class="list-group" [items]="devolutionAppointments" (itemTap)="onDevolutionTap($event)"
@@ -74,9 +78,9 @@
                                   <Image horizontalAlignment="left" width="19dp"
                                       height="19dp" class="info-icon" src="~/images/icons/driver.png"></Image>
                                   <Label text="Conductor: " style="font-family:Roboto-Medium;"
-                                      class="asegurado-label" flexGrow="1"></Label>
-                                  <Label [text]="cita.conductor_nombre ?  cita.conductor_nombre.substr(0,15): '' " class="asegurado-label"
-                                      flexGrow="1"></Label>
+                                      class="asegurado-label"></Label>
+                                  <Label [text]="cita.conductor ?  cita.conductor.substr(0,15): '' " class="asegurado-label"
+                                  ></Label>
                               </StackLayout>
                               <StackLayout style="margin-top:10dp;"
                                   orientation="horizontal">

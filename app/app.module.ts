@@ -1,3 +1,7 @@
+//localStorage
+import 'nativescript-localstorage';
+
+
 import { NgModule, NgModuleFactoryLoader, NO_ERRORS_SCHEMA } from "@angular/core";
 import { NativeScriptModule } from "nativescript-angular/nativescript.module";
 import { NativeScriptUISideDrawerModule } from "nativescript-ui-sidedrawer/angular";
@@ -10,6 +14,8 @@ import { LoginComponent } from "./login/login.component";
 import { HomeComponent } from "./home/home.component";
 import { CitasComponent } from "./citas/citas.component";
 import { CarphotosComponent } from "./carPhotos/carPhotos.component";
+import { WatchpicComponent } from "./watchPic/watchPic.component";
+import { SurveysComponent } from "./surveys/surveys.component";
 
 
 //components
@@ -29,12 +35,27 @@ import { AuthService } from './services/auth.service';
 import { OfficeService } from './services/office.services';
 import { CitasService } from './services/citas.services';
 
-import { StoreModule } from '@ngrx/store';
+import { StoreModule ,  MetaReducer, ActionReducer  } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { reducers } from './flux/app.states';
 import { AuthEffects } from './flux/effects/auth.effects';
 import { OfficeEffects } from './flux/effects/offices.effects';
 import { CitasEffects } from './flux/effects/citas.effects';
+
+//flux persist
+
+export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
+  return localStorageSync({keys: ['auth','citas','offices'],rehydrate: true})(reducer);
+}
+
+export function localStorageSyncReducer2(reducer: ActionReducer<any>): ActionReducer<any> {
+  return localStorageSync({keys: [{app: ['surveys'] }]})(reducer);
+}
+
+import { localStorageSync } from 'ngrx-store-localstorage';
+
+const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer,localStorageSyncReducer2];
+ 
 
 @NgModule({
     bootstrap: [
@@ -46,7 +67,7 @@ import { CitasEffects } from './flux/effects/citas.effects';
         AppRoutingModule,
         NativeScriptUISideDrawerModule,
         NativeScriptFormsModule,
-        StoreModule.forRoot(reducers,{}),
+        StoreModule.forRoot(reducers,{metaReducers}),
         EffectsModule.forRoot([AuthEffects,OfficeEffects,CitasEffects])
     ],
     declarations: [
@@ -59,7 +80,9 @@ import { CitasEffects } from './flux/effects/citas.effects';
         PageContainerComponent,
         OfficefiltermodalComponent,
     		PlatefiltermodalComponent,
-        InfoappointmentComponent
+        InfoappointmentComponent,
+        WatchpicComponent,
+        SurveysComponent
     ],
     providers: [
       AuthService,

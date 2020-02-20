@@ -3,6 +3,7 @@ import { Action } from '@ngrx/store';
 
 export enum AppActionTypes {
   IS_FETCHING = '[App] FETCH',
+  SET_SURVEYS = '[App] SURVEYS',
 }
 
 export class IsFetching implements Action {
@@ -10,5 +11,11 @@ export class IsFetching implements Action {
     constructor(public payload: boolean) { }
 }
 
+export class SetSurveys implements Action {
+  readonly type = AppActionTypes.SET_SURVEYS;
+  constructor(public payload: any) {}
+}
+
 export type All =
-    | IsFetching ;
+    | IsFetching
+    | SetSurveys ;

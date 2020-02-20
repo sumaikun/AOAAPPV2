@@ -3,10 +3,12 @@ import { AppActionTypes, All } from '../actions/app.actions';
 export interface State {
     // is fetching a process?
     isFetching: boolean;
+    surveys: any;
 }
 
 export const initialState: State = {
-    isFetching: false
+    isFetching: false,
+    surveys: {}
 };
 
 export function reducer(state = initialState, action: All): State {
@@ -18,6 +20,19 @@ export function reducer(state = initialState, action: All): State {
         ...state,
         isFetching: action.payload
       };
+    }
+    case AppActionTypes.SET_SURVEYS: {
+
+      state = {
+        ...state,
+        surveys: action.payload
+      };
+
+      console.log("surveys payload");
+
+      console.log(action);
+
+      return state;
     }
     default: {
       return state;

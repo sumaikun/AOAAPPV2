@@ -16,10 +16,10 @@
 }
 
 .icon-picture-container{
-	}
+}
 
 .pic-icon{
-	position: absolute;	
+	position: absolute;
 	margin-left: -16dp !important;
 }
 
@@ -32,4 +32,15 @@
 	position: absolute;
 	margin-right:12dp;
 	font-family: Roboto-Medium;
+}
+
+.image-taken{
+	width: 35%;
+	height: 35%;
+	margin-top:18px;
+}
+
+TabView {
+    tab-text-color: #ffffff;
+
 }

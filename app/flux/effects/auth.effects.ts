@@ -7,6 +7,7 @@ import { AuthService } from "../../services/auth.service";
 import {catchError} from 'rxjs/operators/catchError';
 import { tap } from 'rxjs/operators';
 import { alert, prompt } from "tns-core-modules/ui/dialogs";
+import { properties } from '../../properties';
 
 import {
   AuthActionTypes,
@@ -16,17 +17,18 @@ import {
 } from '../actions/auth.actions';
 
 import {
-  IsFetching
+  IsFetching,
+  SetSurveys
 } from '../actions/app.actions';
 
 import {
-  SetOffices,
-  GetOffices
+  SetOffices,  
 } from '../actions/office.actions';
 
 import {
-  GetCitasEntrega,
-  GetCitasDevolucion
+  SetCitasEntrega,
+  SetCitasDevolucion,
+  SetCitasSiniestrosInfo
 } from '../actions/citas.actions';
 
 
@@ -50,35 +52,27 @@ export class AuthEffects {
                 let dispatchArray;
 
                 if(data)
-                {
-                  //console.log("first condition");
-                  //console.log(data);
-
-                  if(data.datosFlota === null)
-                  {
-                      alert({
-                          title: "error",
-                          message: "El usuario administrador necesita un operario de flota",
-                          okButtonText: "Ok"
-                      });
-
-                      return dispatchArray = [new IsFetching(false)];
-                  }
-
-                  let todayDate = new Date().getFullYear() + "-"
-                	+ ( new Date().getMonth() + 1 > 9 ?  new Date().getMonth() + 1 : "0"+ ( new Date().getMonth() + 1 ) )
-                	+ "-" +  ( new Date().getDate()  > 9 ?  new Date().getDate() : "0"+ ( new Date().getDate()  ) ) ;
+                {   
+                  //access token 
+                  properties.setToken(data.user.token);
 
                   dispatchArray = [
-                    new LogInSuccess(data),
-                    new GetOffices(data),
-                    new GetCitasEntrega({office:data.datosFlota.oficina,date:todayDate,keepFetching:true}),
-                    new GetCitasDevolucion({office:data.datosFlota.oficina,date:todayDate,keepFetching:true})
+                    new LogInSuccess(data.user),
+                    new SetOffices(data.offices),
+                    new SetCitasEntrega(data.deliverAppointments),
+                    new SetCitasDevolucion(data.devolappointments),
+                    new SetSurveys(data.surveys),
+                    new SetCitasSiniestrosInfo(data.deliverInfo),
+                    new SetCitasSiniestrosInfo(data.devolInfo),
+                    new IsFetching(false)                   
                   ];
+
+                  
+
                 }
                 else{
                   //console.log("second condition");
-                  dispatchArray = [new LogInSuccess(data) ,new IsFetching(false)];
+                  dispatchArray = [new LogInSuccess(null) ,new IsFetching(false)];
                 }
 
                return dispatchArray;
@@ -93,7 +87,8 @@ export class AuthEffects {
                  message: "Hubo error en el servidor o no hay conexión a internet",
                  okButtonText: "Ok"
              });
-              return of( new LogInFailure(error));
+              //return of( new LogInFailure(error));
+              return of(new IsFetching(false));
            })
          )
 
@@ -114,7 +109,7 @@ export class AuthEffects {
           });
         }
         else{
-          this.router.navigateByUrl('/home');
+          this.router.navigateByUrl('/home');          
         }
 
       })

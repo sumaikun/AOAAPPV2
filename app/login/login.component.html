@@ -1,6 +1,6 @@
 <Loading *ngIf="isFetching"></Loading>
-<ScrollView  *ngIf="!isFetching" width="100%" height="100%" class="page">
-    <ScrollView width="100%" height="100%" class="home-panel">
+<StackLayout  *ngIf="!isFetching" width="100%" height="100%" class="page">
+    <StackLayout height="100%"  class="home-panel">
         <WrapLayout orientation="vertical" id="login-container">
             <!--Add your page content here-->
             <Image id="login-logo" src="~/images/logo.png"></Image>
@@ -19,8 +19,8 @@
                     <TextField [(ngModel)]="login.password" hint=" Contraseña"
                         secure="true"></TextField>
                 </StackLayout>
-                <Button text="ENTRAR" (tap)="makeLogin()"></Button>
+                <Button text="ENTRAR" (tap)="makeLogin()" ></Button>
             </StackLayout>
         </WrapLayout>
-    </ScrollView>
-</ScrollView>
+    </StackLayout>
+</StackLayout>

@@ -4,7 +4,7 @@ import { ModalDialogParams } from "nativescript-angular/modal-dialog";
 //flux
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
-import { AppState, selectAppState, selectOfficeState } from '../flux/app.states';
+import { AppState, selectAppState, selectOfficeState, selectCitasState } from '../flux/app.states';
 
 
 import { GetCitasEntrega } from '../flux/actions/citas.actions';
@@ -34,32 +34,57 @@ export class OfficefiltermodalComponent implements OnInit {
 	isFetching: boolean | null;
 	getAppState: Observable<any>;
 	getOfficeState: Observable<any>;
+	getAppointmentsState: Observable<any>;
 
 	constructor( private store: Store<AppState>, private params: ModalDialogParams ) {
 		this.getAppState = this.store.select(selectAppState);
 		this.getOfficeState = this.store.select(selectOfficeState);
+		this.getAppointmentsState = this.store.select(selectCitasState);
 	}
 
 	ngOnInit(): void {
-			console.log("On office Modal");
+		
+		console.log("On office Modal");
 
-			this.getAppState.subscribe( (state) => {
-				this.isFetching = state.isFetching;
-			});
+		this.getAppState.subscribe( (state) => {
+			this.isFetching = state.isFetching;
+		});
 
-			this.getOfficeState.subscribe( (state) => {
-				//console.log(state);
-				if(state.userOffices.length > 0 && state.userOffices != this.userOffices )
-				{
-					this.userOffices = state.userOffices;
-					this.listPickerOffices = [];
-					state.userOffices.forEach( office => {
-						//console.log(office.nombre);
-						this.listPickerOffices.push(office.nombre);
-					});
-					//console.log(this.listPickerOffices);
-				}
-			});
+		this.getOfficeState.subscribe( (state) => {
+			//console.log(state);
+			if(state.userOffices.length > 0 && state.userOffices != this.userOffices )
+			{
+				this.userOffices = state.userOffices;
+				this.listPickerOffices = [];
+				state.userOffices.forEach( office => {
+					//console.log(office);
+					this.listPickerOffices.push(office.name);
+				});
+				//console.log(this.listPickerOffices);
+			}
+		});
+
+
+		this.getAppointmentsState.subscribe( (state) => {
+			if(state.filteredOffice && state.filteredDate)
+			{
+				console.log("hay filtros disponibles")
+
+				const index = this.userOffices.findIndex( office =>  office.id === state.filteredOffice )
+
+				this.selectedListPickerIndex = index
+
+				const dateTaken = state.filteredDate.split("-")
+
+				console.log(dateTaken)
+
+				this.currentYear = dateTaken[0]
+
+				this.currentMonth = dateTaken[1]
+
+				this.currentDay = dateTaken[2]
+			}
+		});
 
 	}
 

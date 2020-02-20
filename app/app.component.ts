@@ -4,6 +4,15 @@ import { RadSideDrawer } from "nativescript-ui-sidedrawer";
 import * as app from "tns-core-modules/application";
 import { alert, prompt, confirm } from "tns-core-modules/ui/dialogs";
 
+
+//Store
+
+import { Store } from '@ngrx/store';
+import { AppState } from './flux/app.states';
+import { LogOut } from './flux/actions/auth.actions';
+import { SetInitialState } from './flux/actions/citas.actions';
+import { properties } from "./properties";
+
 @Component({
     selector: "ns-app",
     templateUrl: "app.component.html"
@@ -12,7 +21,20 @@ export class AppComponent {
 
   constructor(
       private router: RouterExtensions,
-  ) { }
+      private store: Store<AppState>
+  ) {
+      console.log("App component constructor");
+      const logoutAction = () => {
+        console.log("logout Action")
+        this.store.dispatch( new LogOut() )
+        this.store.dispatch( new SetInitialState() )
+        this.router.navigateByUrl('/login')
+        const sideDrawer = <RadSideDrawer>app.getRootView();
+        sideDrawer.closeDrawer();
+        localStorage.clear()
+      }
+      properties.setLogoutAction(logoutAction)    
+   }
 
   goTo(url): void {
     console.log("Go to citas");
@@ -31,10 +53,9 @@ export class AppComponent {
 
         if(result)
         {
-          self.router.navigateByUrl('/login');
-          const sideDrawer = <RadSideDrawer>app.getRootView();
-      		sideDrawer.closeDrawer();
-        }
+          const action = properties.getInstance().getLogoutAction();
+          action()
+        } 
 
     });
 

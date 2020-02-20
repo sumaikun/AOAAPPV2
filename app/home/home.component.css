@@ -66,6 +66,24 @@
     border-radius: 25p;
 }
 
+.options-container{
+    background-color: #031F1B;
+    margin-top: 42dp;    
+    margin-left: 5%;
+    margin-right: 5%;
+    border-radius: 25p;
+    border-color: black;
+    border-width: 2dp;
+    color: white;
+    font-size: 20dp;
+    text-align: center;
+}
+
+.button-text{
+    padding:18%;
+    font-weight: bold;
+}
+
 .info-container{
     color:#A2A2A2;
     font-size: 10dp;

@@ -70,6 +70,8 @@ ListView { separator-color: #224A50; }
 
 .asegurado-label{
 	font-size: 8dp;
+	color: black;
+	position: absolute;
 }
 
 .info-icon{
@@ -79,4 +81,9 @@ ListView { separator-color: #224A50; }
 .info-container{
 	margin-right: 11dp;
 	margin-top: 2dp;
+}
+
+TabView {
+    tab-text-color: #ffffff;
+
 }

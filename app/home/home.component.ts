@@ -3,6 +3,8 @@ import { RadSideDrawer } from "nativescript-ui-sidedrawer";
 import * as app from "tns-core-modules/application";
 import { Page } from "tns-core-modules/ui/page";
 
+import { properties } from '../properties';
+
 //flux
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
@@ -20,8 +22,7 @@ export class HomeComponent implements OnInit {
     isFetching: boolean | null;
 
     constructor(private page: Page, private store: Store<AppState>) {
-      this.getState = this.store.select(selectAppState);
-
+      this.getState = this.store.select(selectAppState);    
     }
 
     ngOnInit(): void {

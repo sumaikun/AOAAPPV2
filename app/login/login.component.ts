@@ -1,12 +1,15 @@
 import { Component, OnInit } from "@angular/core";
 import { Page } from "tns-core-modules/ui/page";
 import { Login } from '../models/Login';
-import { AppState, selectAppState } from '../flux/app.states';
+import { AppState, selectAppState, selectAuthState } from '../flux/app.states';
 import { LogIn } from '../flux/actions/auth.actions';
 import { IsFetching } from '../flux/actions/app.actions';
 import { Store } from '@ngrx/store';
 import { formValidation } from "../helpers/formValidation";
 import { Observable } from 'rxjs/Observable';
+import { RouterExtensions } from "nativescript-angular/router";
+
+
 
 @Component({
 	selector: "Login",
@@ -18,7 +21,8 @@ export class LoginComponent implements OnInit {
 
 	login: Login = new Login();
 	getState: Observable<any>;
-  isFetching: boolean | null;
+	userState: Observable<any>;
+    isFetching: boolean | null;
 
 
 	makeLogin(): void {
@@ -41,8 +45,26 @@ export class LoginComponent implements OnInit {
 	}
 
 
-	constructor(private page: Page, private store: Store<AppState>) {
+	constructor(private page: Page, private store: Store<AppState>,
+		private router: RouterExtensions) {
 		this.getState = this.store.select(selectAppState);
+		
+		//console.log(JSON.parse(localStorage.getItem('auth')));
+
+		/*let storage = JSON.parse(localStorage.getItem('auth'));
+		
+		if(storage)
+		{
+			console.log("in storage");
+			if( storage.userData != null)
+			{
+				//pass login
+				this.router.navigateByUrl('/home');
+			}	
+		}*/
+			
+		//console.log(localStorage.getItem('auth'));
+
 	}
 
 	ngOnInit(): void {
@@ -50,10 +72,9 @@ export class LoginComponent implements OnInit {
 		this.page.actionBarHidden = true;
 
 		this.getState.subscribe((state) =>
-		{
-				this.isFetching = state.isFetching;
+		{			
+			//console.log("any");
+			this.isFetching = state.isFetching;
 		});
-
-
 	}
 }

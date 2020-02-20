@@ -7,11 +7,12 @@ import { CitasService } from "../../services/citas.services";
 import {catchError} from 'rxjs/operators/catchError';
 import { tap } from 'rxjs/operators';
 import { alert, prompt } from "tns-core-modules/ui/dialogs";
-
-
+import { serverResponse } from "../../helpers/serverResponse" 
+import { properties } from '../../properties';
 import {
   IsFetching
 } from '../actions/app.actions';
+import * as moment from 'moment';
 
 import {
   GetCitasEntrega,
@@ -20,7 +21,9 @@ import {
   SetCitasDevolucion,
   GetCitasSiniestrosInfo,
   SetCitasSiniestrosInfo,
-  CitasActionTypes
+  CitasActionTypes,
+  SetCitasEntregaR,
+  SetCitasDevolucionR,
 } from '../actions/citas.actions';
 
 @Injectable()
@@ -33,119 +36,140 @@ export class CitasEffects {
     ){ }
 
 
-   @Effect({ dispatch: true })
-   getDelAppointments$ = this.actions$.pipe(
-       ofType(CitasActionTypes.GET_CITAS_ENT),
-       mergeMap((action:any) =>{
-         //console.log("in Citas Effects");
-         //console.log(action);
-         return  this.citasService.getDeliverAppointments(action.payload.office,action.payload.date).pipe(
-           mergeMap(data =>
-             {
-                let dispatchArray;
+  @Effect({ dispatch: true })
+  getDelAppointments$ = this.actions$.pipe(
+      ofType(CitasActionTypes.GET_CITAS_ENT),
+      mergeMap((action:any) =>{
+        //console.log("in Citas Effects");
+        //console.log(action);
+        return  this.citasService.getDeliverAppointments(action.payload.office,action.payload.date).pipe(
+          mergeMap((data:any) =>
+            {
 
+              console.log("action payload",action.payload)
+
+              let dispatchArray = [] ;
+
+              if(data && data.appointments)
+              {
                 if(action.payload.keepFetching)
                 {
-                    dispatchArray = [new SetCitasEntrega(data)];
+                  dispatchArray = [new SetCitasEntregaR({data:data.appointments,date:action.payload.date,office:action.payload.office})];
+                }            
+                else
+                {
+                  dispatchArray = [new SetCitasEntregaR({data:data.appointments,date:action.payload.date,office:action.payload.office})
+                    ,new IsFetching(false)];
                 }
-                else{
+              }              
+              
+              return dispatchArray;
+              
+            }),
+          catchError(error =>
+          {
+            console.log(error,error.stack)  
+            serverResponse.checkServerError(error)
+            return of( new IsFetching(false) );
+          }));
 
-                    dispatchArray = [new SetCitasEntrega(data),new IsFetching(false)];
-                }
+      })
+    );
+
+  @Effect({ dispatch: true })
+    getDevolAppointments$ = this.actions$.pipe(
+      ofType(CitasActionTypes.GET_CITAS_DEV),
+      mergeMap((action:any) =>{
+        //console.log("in Citas Effects");
+        //console.log(action);
+        return  this.citasService.getDevolutionAppointments(action.payload.office,action.payload.date).pipe(
+          switchMap((data:any) =>
+            {
+                //console.log("Citas de devolución");
+                //console.log(data);
+
+                let dispatchArray = [];
+
+                if(data && data.appointments)
+                {
+                  if(action.payload.keepFetching)
+                  {
+                    dispatchArray = [new SetCitasDevolucionR({data:data.appointments,date:action.payload.date,office:action.payload.office})];
+                  }               
+                  else
+                  {
+                    dispatchArray = [new SetCitasDevolucionR({data:data.appointments,date:action.payload.date,office:action.payload.office}),new IsFetching(false)];
+                  }
+                }  
 
                 return dispatchArray;
-             }),
-           catchError(error =>
-           {
-             console.log(error);
-             alert({
-                 title: "error",
-                 message: "Hubo un error buscando las citas de entrega, verifique el servidor o la conexión a internet",
-                 okButtonText: "Ok"
-             });
+            }),
+          catchError(error =>
+          {
+            console.log(error,error.stack)  
+            serverResponse.checkServerError(error)
               return of( new IsFetching(false) );
-           }));
+          }));
 
-        })
-      );
+      })
+    );
 
-      @Effect({ dispatch: true })
-      getDevolAppointments$ = this.actions$.pipe(
-          ofType(CitasActionTypes.GET_CITAS_DEV),
-          mergeMap((action:any) =>{
-            //console.log("in Citas Effects");
-            //console.log(action);
-            return  this.citasService.getDevolutionAppointments(action.payload.office,action.payload.date).pipe(
-              switchMap(data =>
-                {
-                   //console.log("Citas de devolución");
-                   //console.log(data);
 
-                   let dispatchArray;
+  @Effect({ dispatch: true })
+  getAppointmentSiniesterInfo$ = this.actions$.pipe(
+      ofType(CitasActionTypes.GET_CITAS_SINI_INFO),
+      mergeMap((action:any) =>{
+        //console.log("in Citas Effects");
+        //console.log(action);
 
-                   if(action.payload.keepFetching)
-                   {
-                     dispatchArray = [new SetCitasDevolucion(data)];
-                   }
-                   else
-                   {
-                      dispatchArray = [new SetCitasDevolucion(data),new IsFetching(false)];
-                   }
+        /*if(navigator.onLine)
+        {
+          let dispatchArray;
+          dispatchArray = [new SetCitasSiniestrosInfo(null),new IsFetching(false)];
+          return dispatchArray;
+        } */       
 
-                   return dispatchArray;
-                }),
-              catchError(error =>
+        return  this.citasService.getAppointmentsSiniesterInfo(action.payload.idAppointment).pipe(
+          switchMap((data:any) =>
+            {
+              //console.log("Obtener información del siniestro");
+              //console.log(data);
+
+              let dispatchArray;
+
+              if(action.payload.keepFetching)
               {
-                console.log(error);
-                alert({
-                    title: "error",
-                    message: "Hubo un error buscando las citas de devolución, verifique el servidor o la conexión a internet",
-                    okButtonText: "Ok"
-                });
-                 return of( new IsFetching(false) );
-              }));
+                dispatchArray = [new SetCitasSiniestrosInfo(data.siniester)];
+              }
+              else
+              {
+                  dispatchArray = [new SetCitasSiniestrosInfo(data.siniester),new IsFetching(false)];
+              }
 
-           })
-         );
+              if(properties.getInstance().getCb())
+              {
+                let cb = properties.getInstance().getCb()
+                cb(true,false)
+              }
 
+              return dispatchArray;
+            }),
+          catchError(error =>
+          {
+            console.log(error,error.stack)  
+            
+            serverResponse.checkServerError(error)            
+            
+            if(properties.getInstance().getCb())
+            {              
+              let cb = properties.getInstance().getCb()
+              cb(false,true)
+            }
+ 
+            return of( new IsFetching(false) );
+          }));
 
-         @Effect({ dispatch: true })
-         getAppointmentSiniesterInfo$ = this.actions$.pipe(
-             ofType(CitasActionTypes.GET_CITAS_SINI_INFO),
-             mergeMap((action:any) =>{
-               //console.log("in Citas Effects");
-               //console.log(action);
-               return  this.citasService.getAppointmentsSiniesterInfo(action.payload.idAppointment).pipe(
-                 switchMap(data =>
-                   {
-                      //console.log("Obtener información del siniestro");
-                      //console.log(data);
-
-                      let dispatchArray;
-
-                      if(action.payload.keepFetching)
-                      {
-                        dispatchArray = [new SetCitasSiniestrosInfo(data)];
-                      }
-                      else
-                      {
-                         dispatchArray = [new SetCitasSiniestrosInfo(data),new IsFetching(false)];
-                      }
-
-                      return dispatchArray;
-                   }),
-                 catchError(error =>
-                 {
-                   console.log(error);
-                   alert({
-                       title: "error",
-                       message: "Hubo un error buscando la, verifique el servidor o la conexión a internet",
-                       okButtonText: "Ok"
-                   });
-                    return of( new IsFetching(false) );
-                 }));
-
-              })
-            );
+    })
+  );
 
 }

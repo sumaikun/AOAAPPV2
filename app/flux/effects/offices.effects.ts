@@ -35,7 +35,7 @@ export class OfficeEffects {
        mergeMap((action:any) =>{
          console.log("in Office Effects");
          return this.officeService.getOffices().pipe(
-           switchMap(data =>
+           switchMap((data:any) =>
              {
                 console.log("Effect for offices");
                 //console.log(data);
@@ -49,7 +49,7 @@ export class OfficeEffects {
                 }
 
                 return dispatchArray;
-             }),
+             }), 
            catchError(error =>
            {
              console.log(error);

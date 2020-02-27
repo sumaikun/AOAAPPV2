@@ -15,6 +15,15 @@
 	background: linear-gradient(to right, #437077 0%, #437077 20%, white 21%, white 100%);
 }
 
+.button-option{
+	height: 52dp;
+	background-color: #003057;
+	color:white;
+	margin-right: 15dp;
+	margin-left: 15dp;
+	border-color: black;
+}
+
 .icon-picture-container{
 }
 

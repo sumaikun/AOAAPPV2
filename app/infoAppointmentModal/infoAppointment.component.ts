@@ -40,12 +40,12 @@ export class InfoappointmentComponent implements OnInit {
 				this.siniesterInfo = state.siniesterInfo[siniesterInfo];
 				this.readyToShow = true;
 			}else{
-				//console.log("No hay información del siniestro")
-				alert({
+				console.log("No hay información del siniestro")
+				/*alert({
 					title: "error",
 					message: "No hay información del siniestro, vuelva a buscar la información",
 					okButtonText: "Ok"
-				});
+				});*/
 			}
 
 			

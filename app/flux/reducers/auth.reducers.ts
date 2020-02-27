@@ -2,6 +2,7 @@ import { User } from '../../models/User';
 import { Login } from '../../models/Login';
 
 import { AuthActionTypes, All } from '../actions/auth.actions';
+import { ACTIONS_SUBJECT_PROVIDERS } from '@ngrx/store/src/actions_subject';
 
 export interface State {
     // is a user authenticated?
@@ -43,6 +44,12 @@ export function reducer(state = initialState, action: All): State {
       return {
         ...state,
         errorMessage: 'Incorrect email and/or password.'
+      };
+    }
+    case AuthActionTypes.SET_USER_DATA: {
+      return {
+        ...state,
+        userData: action.payload
       };
     }
     case AuthActionTypes.LOGOUT: {

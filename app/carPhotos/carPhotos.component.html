@@ -8,7 +8,7 @@
         <ScrollView orientation="vertical" height="100%" *tabItem="{title: 'Imagenes Vehículo'}"
         style="background-color:#224A50">
           <StackLayout >
-
+                
               <Button *ngIf = " frontCameraImage && leftCameraImage && rightCameraImage
                 && backCameraImage "  text="Guardar Imagenes" (tap)="sendPics()"></Button>
 
@@ -70,8 +70,8 @@
                ></Image>
 
               <FlexboxLayout class="button-item" alignItems="center"
-                  justifyContent="space-between" (tap)="onTakePictureTap($event,'backCameraImage')">
-                  <Image *ngIf="odometerCameraImage" [src]="backCameraImage" (doubleTap)="verifyThisImage(backCameraImage)"  ></Image>
+                  justifyContent="space-between" (tap)="onTakePictureTap($event,'odometerCameraImage')">
+                  <Image *ngIf="odometerCameraImage" [src]="odometerCameraImage" (doubleTap)="verifyThisImage(odometerCameraImage)"  ></Image>
                   <Image *ngIf="!odometerCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
                   <Label class="button-label" text="ODOMETRO"></Label>
@@ -100,8 +100,8 @@
 
               <FlexboxLayout class="button-item" alignItems="center"
                   justifyContent="space-between" (tap)="onTakePictureTap($event,'checkCameraImage')">
-                  <Image *ngIf="frontCameraImage" [src]="checkCameraImage" (doubleTap)="verifyThisImage(checkCameraImage)"  ></Image>
-                  <Image *ngIf="!frontCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="checkCameraImage" [src]="checkCameraImage" (doubleTap)="verifyThisImage(checkCameraImage)"  ></Image>
+                  <Image *ngIf="!checkCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
                   <Label class="button-label" text="LISTA DE CHEQUEO"></Label>
                   <Image class="car-icon" src="~/images/icons/document.jpg"></Image>
@@ -109,12 +109,20 @@
 
               <FlexboxLayout class="button-item" alignItems="center"
                   justifyContent="space-between" (tap)="onTakePictureTap($event,'inventoryCameraImage')">
-                  <Image *ngIf="frontCameraImage" [src]="inventoryCameraImage" (doubleTap)="verifyThisImage(inventoryCameraImage)"  ></Image>
-                  <Image *ngIf="!frontCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="inventoryCameraImage" [src]="inventoryCameraImage" (doubleTap)="verifyThisImage(inventoryCameraImage)"  ></Image>
+                  <Image *ngIf="!inventoryCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
                   <Label class="button-label" text="IMAGEN INVENTARIO"></Label>
                   <Image class="car-icon" src="~/images/icons/document.jpg"></Image>
-              </FlexboxLayout>
+              </FlexboxLayout>             
+
+              <Button text="GUARDAR IMAGENES" class="button-option" (tap)="saveImages()" ></Button>
+
+              <Button text="REGISTRAR KILOMETRAJE" class="button-option" (tap)="registerKilometers()" ></Button>
+
+              <Button text="REALIZAR ENCUESTA" class="button-option" (tap)="makeSurvey()" ></Button>
+
+              <Button text="REALIZAR ACTA ENTREGA" class="button-option" (tap)="makeAct()" ></Button>
 
               <!--
               <Image *ngIf = " mode == 2  && showPictures " class="car-icon image-taken"

@@ -1,17 +1,27 @@
 import { Component, OnInit } from "@angular/core";
 import { Page } from "tns-core-modules/ui/page";
-import { takePicture, requestPermissions } from 'nativescript-camera';
-import { ImageAsset } from 'tns-core-modules/image-asset';
-import {ImageSource, fromFile, fromAsset, fromResource, fromBase64} from "tns-core-modules/image-source";
+import { takePicture, requestPermissions, isAvailable } from 'nativescript-camera';
+//import { ImageAsset } from 'tns-core-modules/image-asset';
+//import {ImageSource, fromFile, fromAsset, fromResource, fromBase64} from "tns-core-modules/image-source";
 import { Image } from "tns-core-modules/ui/image";
 import { RouterExtensions } from "nativescript-angular/router";
 import {  ActivatedRoute, Params } from '@angular/router';
+
+import { prompt, alert } from "tns-core-modules/ui/dialogs";
+
 
 //flux
 import { Observable } from 'rxjs/Observable';
 import { AppState, selectCitasState } from '../flux/app.states';
 import { Store } from '@ngrx/store';
 import { IsFetching } from '../flux/actions/app.actions';
+
+const options = {
+    width: 500,
+    height: 500,
+    keepAspectRatio: true,
+    saveToGallery: true
+};
 
 @Component({
 	selector: "Carphotos",
@@ -48,18 +58,35 @@ export class CarphotosComponent implements OnInit {
 	currentSiniester: any;
 	isFetching: boolean = false;
 
+
+	//
+
+	kilometersRegistered: number;
+
 	constructor(private page: Page, private router: RouterExtensions,
 	private route: ActivatedRoute, private store: Store<AppState>) {
 		this.getAppointmentsState = this.store.select(selectCitasState);
 	}
 
 	ngOnInit(): void {
+		
+		prompt({title:"¿Cual es el kilometraje actual?", defaultText:"",
+		okButtonText: "CONTINUAR", inputType:"number"}).then(r => {
+			console.log("Dialog result: " + r.result + ", text: " + r.text);
+			if(r.result)
+			{
+				this.kilometersRegistered = Number(r.text)
+			}	
+			
+		
+		});
+		 
 		this.page.actionBarHidden = true;
 
 		this.route.params.subscribe((params: Params) => {
-      console.log(params);
-      this.mode = params.mode;
-    });
+			console.log(params);
+			this.mode = params.mode;
+		});
 
 		this.getAppointmentsState.subscribe( (state) =>
 		{
@@ -115,7 +142,15 @@ export class CarphotosComponent implements OnInit {
     }
 
     capture(imageIndex) {
-        takePicture({ width: 250, height: 300, keepAspectRatio: true, saveToGallery: this.saveToGallery })
+		if(!isAvailable())
+        {
+            alert({
+                title: "error",
+                message: "No se puede acceder a la camara",
+                okButtonText: "Ok"
+            });
+        }else{
+        takePicture(options)
             .then((imageAsset: any) => {
 								console.log(imageAsset._android);
 
@@ -129,32 +164,69 @@ export class CarphotosComponent implements OnInit {
 
             }, (error) => {
                 console.log("Error: " + error);
-            });
+			});
+		}
     }
 
-		verifyThisImage(thisImage){
-			console.log("here double tap");
-			this.router.navigate(["/watchPic", thisImage]);
+	verifyThisImage(thisImage){
+		console.log("here double tap");
+		this.router.navigate(["/watchPic", thisImage]);
+	}
+
+	saveImages(){
+		if(this.kilometersRegistered == null)
+		{
+			alert({
+                title: "error",
+                message: "Necesita poner el kilometraje antes de guardar las imagenes",
+                okButtonText: "Ok"
+            });
+		}else{
+			this.sendPics()	
 		}
+		console.log("validate save images")
+	}
 
-		sendPics(){
-			console.log("Enviar fotos");
-		}
+	registerKilometers(){
 
-		serverPicLoaded(){
+		const kilometers = this.kilometersRegistered ? this.kilometersRegistered.toString() : null
 
-		}
+		prompt({title:"¿Cual es el kilometraje actual?", defaultText:kilometers,
+		 inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
+			console.log("Dialog result: " + r.result + ", text: " + r.text);
+			if(r.result)
+			{
+				this.kilometersRegistered = Number(r.text)
+			}
+		});
+	}
 
-		showPics(){
-			this.showPictures = ! this.showPictures;
-			console.log(this.showPictures);
+	sendPics(){
+		console.log("Enviar fotos");
+	}
 
-			//this.isFetching = true;
+	serverPicLoaded(){
 
-			//let self = this;
+	}
 
-			//setTimeout(function(){ self.isFetching = false; }, 3000);
+	showPics(){
+		this.showPictures = ! this.showPictures;
+		console.log(this.showPictures);
 
-		}
+		//this.isFetching = true;
+
+		//let self = this;
+
+		//setTimeout(function(){ self.isFetching = false; }, 3000);
+
+	}
+
+	makeSurvey(){
+		this.router.navigateByUrl('/surveys/survey/1');
+	}
+
+	makeAct(){
+		this.router.navigateByUrl('/surveys/act/1');
+	}
 
 }

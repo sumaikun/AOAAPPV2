@@ -24,13 +24,13 @@ if(AuthState && AuthState.isAuthenticated)
 }
 
 const routes: Routes = [
-  { path: "", redirectTo: AuthState && AuthState.isAuthenticated ?  'home':'login', pathMatch: 'full' },
+  { path: "", redirectTo: AuthState && AuthState.isAuthenticated ?  'surveys/survey/1':'login', pathMatch: 'full' },
   { path: 'watchPic/:picture', component: WatchpicComponent },
   { path: "home", component: HomeComponent },
   { path: "login", component: LoginComponent },
   { path: "citas", component: CitasComponent },
   { path: "fotos/:mode", component: CarphotosComponent },
-  { path: "surveys", component: SurveysComponent },
+  { path: "surveys/:mode/:appointment", component: SurveysComponent },
 ];
 
 @NgModule({

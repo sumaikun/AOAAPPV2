@@ -34,10 +34,10 @@ export class serverResponse {
 
             return false
         }
-        else if(error.status === null){
+        else if(error.status === 0){
             alert({
                 title: "error",
-                message: "¡Sucedió un error inesperado! ",
+                message: "¡Sucedió un error inesperado, puede no haber conexión al servidor! ",
                 okButtonText: "Ok"
             });
         }

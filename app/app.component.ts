@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { RouterExtensions } from "nativescript-angular/router";
 import { RadSideDrawer } from "nativescript-ui-sidedrawer";
 import * as app from "tns-core-modules/application";
-import { alert, prompt, confirm } from "tns-core-modules/ui/dialogs";
+import { confirm } from "tns-core-modules/ui/dialogs";
 
 
 //Store

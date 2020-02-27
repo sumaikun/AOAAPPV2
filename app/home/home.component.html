@@ -5,10 +5,11 @@
             
             <StackLayout id="info-user-container">
                 <Label id="info-user-title" text="Información de usuario"></Label>
-                <FlexboxLayout id="image-container" alignItems="center"
-                    justifyContent="center">
-                    <Image src="~/images/icons/instagram.png" width="50%" height="50%"
-                        id="pic-container"></Image>
+                
+                <FlexboxLayout id="image-container" alignItems="center" (tap)="takeSelfie()"
+                    justifyContent="center" [style.background-image]=" selfiePath ? selfiePath : null " >
+                    <!--<Image src="{{selfiePath}}" 
+                        id="pic-container"  ></Image>-->
                 </FlexboxLayout>
                 <Image src="~/images/logo.png" width="30%" height="30%" id="logo"></Image>
             </StackLayout>

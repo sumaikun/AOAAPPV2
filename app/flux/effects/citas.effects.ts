@@ -61,6 +61,8 @@ export class CitasEffects {
                   dispatchArray = [new SetCitasEntregaR({data:data.appointments,date:action.payload.date,office:action.payload.office})
                     ,new IsFetching(false)];
                 }
+              }else{
+                dispatchArray = [new IsFetching(false)]
               }              
               
               return dispatchArray;
@@ -100,7 +102,9 @@ export class CitasEffects {
                   {
                     dispatchArray = [new SetCitasDevolucionR({data:data.appointments,date:action.payload.date,office:action.payload.office}),new IsFetching(false)];
                   }
-                }  
+                } else{
+                  dispatchArray = [new IsFetching(false)]
+                } 
 
                 return dispatchArray;
             }),

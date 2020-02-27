@@ -18,7 +18,8 @@ import {
 
 import {
   IsFetching,
-  SetSurveys
+  SetSurveys,
+  SetAct
 } from '../actions/app.actions';
 
 import {
@@ -62,6 +63,7 @@ export class AuthEffects {
                     new SetCitasEntrega(data.deliverAppointments),
                     new SetCitasDevolucion(data.devolappointments),
                     new SetSurveys(data.surveys),
+                    new SetAct(data.act),
                     new SetCitasSiniestrosInfo(data.deliverInfo),
                     new SetCitasSiniestrosInfo(data.devolInfo),
                     new IsFetching(false)                   

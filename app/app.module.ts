@@ -18,6 +18,10 @@ import { WatchpicComponent } from "./watchPic/watchPic.component";
 import { SurveysComponent } from "./surveys/surveys.component";
 
 
+import { TNSCheckBoxModule } from '@nstudio/nativescript-checkbox/angular';
+
+
+
 //components
 
 import { LoadingComponent } from "./loading/loading.component";
@@ -45,7 +49,7 @@ import { CitasEffects } from './flux/effects/citas.effects';
 //flux persist
 
 export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
-  return localStorageSync({keys: ['auth','citas','offices'],rehydrate: true})(reducer);
+  return localStorageSync({keys: ['auth','citas','offices','app'],rehydrate: true})(reducer);
 }
 
 export function localStorageSyncReducer2(reducer: ActionReducer<any>): ActionReducer<any> {
@@ -67,6 +71,7 @@ const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer,loca
         AppRoutingModule,
         NativeScriptUISideDrawerModule,
         NativeScriptFormsModule,
+        TNSCheckBoxModule,
         StoreModule.forRoot(reducers,{metaReducers}),
         EffectsModule.forRoot([AuthEffects,OfficeEffects,CitasEffects])
     ],

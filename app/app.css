@@ -1,3 +1,6 @@
+@import '~nativescript-theme-core/css/core.light.css';
+@import '~nativescript-filter-select/styles.css';
+
 .sidedrawer-header {
   background-color: #003057;
   height: 84dp;
@@ -13,9 +16,6 @@
     height: 84dp;
     border-bottom-right-radius: 100%
 }
-
-
-
 
 .sidedrawer-header-text {
 

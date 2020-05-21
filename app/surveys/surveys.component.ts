@@ -8,6 +8,10 @@ import { Observable } from 'rxjs/Observable';
 import { AppState, selectAppState, selectAuthState } from '../flux/app.states';
 
 
+import { PhotoEditor, PhotoEditorControl } from "nativescript-photo-editor";
+
+
+import { ImageSource , fromUrl } from "tns-core-modules/image-source";
 
 @Component({
 	selector: "Surveys",
@@ -27,8 +31,7 @@ export class SurveysComponent implements OnInit {
 	surveys: any[];
 	acts: any[];
 
-	public items: Array<string> = ["Batman", "Joker", "Bane"];
-	
+	drawImage:ImageSource;
 
 	constructor(private page: Page, private store: Store<AppState>,
 			private route: ActivatedRoute,
@@ -81,6 +84,28 @@ export class SurveysComponent implements OnInit {
 
 			
 
+	}
+
+	async editPicture(){	
+		
+		console.log("edit picture")
+
+		const photoEditor = new PhotoEditor();
+
+		photoEditor.editPhoto({
+			imageSource: this.drawImage ? this.drawImage : await fromUrl("https://app.aoacolombia.com/Control/operativo/lineavehiculo/g/04-20-2017-Camioneta-SUV.jpg"),
+			hiddenControls: [
+				PhotoEditorControl.Crop,
+				PhotoEditorControl.Text
+			],
+		}).then((newImage: ImageSource) => {
+			console.log("image ready")
+			//resultImage.imageSource = newImage;
+			console.log(newImage)
+			this.drawImage = newImage		
+		}).catch((e) => {
+			console.error(e);
+		});
 	}
 
 	

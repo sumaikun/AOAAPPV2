@@ -1,0 +1,41 @@
+<StackLayout orientation="vertical" class="modal-container">
+    
+    <Label style="margin-top: 100px;" class="info-title"  text="Registrar entrada o salida"></Label>
+    
+    <FilterSelect
+        style="margin-top: 40px" 
+        height="150px"
+        [items]="eventTypes"
+        (change)="onitemselected($event)"
+        hint="evento" 
+        modal_title="evento"
+        multiple="false"
+        search_param="nombre" 
+        primary_key="id">
+    </FilterSelect>
+
+    <FilterSelect
+        *ngIf="activity.eventType === '7' || activity.eventType === '9' "
+        style="margin-top: 40px" 
+        height="200px"
+        [items]="activitiesTypes"
+        (change)="onitemselected2($event)"
+        hint="actividad" 
+        modal_title="Actividad"
+        multiple="false"
+        search_param="nombre" 
+        primary_key="id">
+    </FilterSelect>    
+    
+    <TextView  style="margin-top: 20px"
+        [(ngModel)]="activity.description"
+        borderColor="#DEDEDE" 
+        borderWidth="1"
+        height="500px"
+        hint="Descripción"
+        returnKeyType="send" class="input input-border"></TextView>
+
+     <Button text="Guardar" (tap)="saveActivity()" class="-primary"></Button>
+   
+    
+</StackLayout>

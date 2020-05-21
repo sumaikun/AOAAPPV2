@@ -19,7 +19,9 @@ import {
 import {
   IsFetching,
   SetSurveys,
-  SetAct
+  SetAct,
+  SetEventTypes,
+  SetRegisterTypes
 } from '../actions/app.actions';
 
 import {
@@ -54,6 +56,8 @@ export class AuthEffects {
 
                 if(data)
                 {   
+
+                  console.log("auth data",data)
                   //access token 
                   properties.setToken(data.user.token);
 
@@ -66,6 +70,8 @@ export class AuthEffects {
                     new SetAct(data.act),
                     new SetCitasSiniestrosInfo(data.deliverInfo),
                     new SetCitasSiniestrosInfo(data.devolInfo),
+                    new SetEventTypes(data.eventTypes),
+                    new SetRegisterTypes(data.activitiesTypes),
                     new IsFetching(false)                   
                   ];
 

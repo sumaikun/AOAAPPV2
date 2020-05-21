@@ -5,12 +5,18 @@ export interface State {
     isFetching: boolean;
     surveys: any;
     act:any;
+    eventTypes:Array<any>
+    activitiesTypes:Array<any>
+    activeEvents:Array<any>
 }
 
 export const initialState: State = {
     isFetching: false,
     surveys: {},
-    act:{}
+    act:{},
+    eventTypes:[],
+    activitiesTypes:[],
+    activeEvents:[]
 };
 
 export function reducer(state = initialState, action: All): State {
@@ -41,6 +47,33 @@ export function reducer(state = initialState, action: All): State {
       state = {
         ...state,
         act: action.payload
+      };
+      
+      return state;
+    }
+    case AppActionTypes.SET_EVENT_TYPES: {
+
+      state = {
+        ...state,
+        eventTypes: action.payload
+      };
+      
+      return state;
+    }
+    case AppActionTypes.SET_REGISTER_TYPES: {
+
+      state = {
+        ...state,
+        activitiesTypes: action.payload
+      };
+      
+      return state;
+    }
+    case AppActionTypes.SET_ACTIVE_EVENTS: {
+
+      state = {
+        ...state,
+        activeEvents: action.payload
       };
       
       return state;

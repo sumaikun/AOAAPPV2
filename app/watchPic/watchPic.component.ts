@@ -5,7 +5,7 @@ import { Page } from "tns-core-modules/ui/page";
 import { RouterExtensions } from "nativescript-angular/router";
 
 @Component({
-	selector: "Carphotos",
+	selector: "WatchPic",
 	moduleId: module.id,
 	templateUrl: "./watchPic.component.html",
 	styleUrls: ['./watchPic.component.css']

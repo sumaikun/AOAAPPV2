@@ -1,0 +1,18 @@
+<Loading *ngIf="isFetching"></Loading>
+<StackLayout *ngIf="!isFetching" orientation="vertical" id="container">
+  <PageContainer pageTitle="Opciones">
+    
+  </PageContainer>
+  
+  <ListView [items]="items" *ngIf=" mode === 'pendingEvents' "
+   (itemTap)="onItemTap($event)" class="list-group">
+    <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">    
+      <StackLayout orientation="horizontal">
+        <Label text="Evento:" class="list-group-item"></Label>  
+        <Label [text]="item.TIPO_EVENTO"  class="list-group-item"></Label>
+        <Label text="Fecha:"  class="list-group-item"></Label>
+        <Label [text]="item.FECHA_EVENTO"  class="list-group-item"></Label>
+      </StackLayout>       
+    </ng-template>
+  </ListView> 
+</StackLayout>

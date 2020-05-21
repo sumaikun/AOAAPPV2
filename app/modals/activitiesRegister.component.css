@@ -1,0 +1,12 @@
+.modal-container{
+	background-color: white;
+	width:314dp;
+	padding:25dp;
+}
+
+.info-title{
+	font-size: 18dp;
+	text-align: center;
+	font-weight: bold;
+	color:#437077; 
+}

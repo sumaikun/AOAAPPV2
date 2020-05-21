@@ -273,11 +273,11 @@ export class CitasComponent implements OnInit {
 	}
 
 	onDevolutionTap(args: ItemEventData): void {
-		console.log(this.devolutionAppointments[args.index]);		
+		//console.log(this.devolutionAppointments[args.index]);		
 
 		const selectedCitaid = this.devolutionAppointments[args.index].citaid
 
-		console.log("devolution tap",selectedCitaid)
+		//console.log("devolution tap",selectedCitaid)
 
 		this.store.dispatch(new IsFetching(true));
 

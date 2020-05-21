@@ -9,6 +9,7 @@ import { CitasComponent } from "./citas/citas.component";
 import { CarphotosComponent } from "./carPhotos/carPhotos.component";
 import { WatchpicComponent } from "./watchPic/watchPic.component";
 import { SurveysComponent } from "./surveys/surveys.component";
+import { ListViewPickerComponent } from "./listViewPicker/listViewPicker.component"
 
 //app singleton
 import { properties } from './properties';
@@ -24,13 +25,14 @@ if(AuthState && AuthState.isAuthenticated)
 }
 
 const routes: Routes = [
-  { path: "", redirectTo: AuthState && AuthState.isAuthenticated ?  'surveys/survey/1':'login', pathMatch: 'full' },
+  { path: "", redirectTo: AuthState && AuthState.isAuthenticated ?  'home':'login', pathMatch: 'full' },
   { path: 'watchPic/:picture', component: WatchpicComponent },
   { path: "home", component: HomeComponent },
   { path: "login", component: LoginComponent },
   { path: "citas", component: CitasComponent },
   { path: "fotos/:mode", component: CarphotosComponent },
   { path: "surveys/:mode/:appointment", component: SurveysComponent },
+  { path: "listPicker/:mode/:items", component: ListViewPickerComponent },
 ];
 
 @NgModule({

@@ -21,6 +21,7 @@ export class PageContainerComponent implements OnInit {
 	}
 
 	onDrawerButtonTap(): void {
+		//console.log("drawer button tap")
 		const sideDrawer = <RadSideDrawer>app.getRootView();
 		sideDrawer.showDrawer();
 	}

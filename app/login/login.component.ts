@@ -10,7 +10,6 @@ import { Observable } from 'rxjs/Observable';
 import { RouterExtensions } from "nativescript-angular/router";
 
 
-
 @Component({
 	selector: "Login",
 	moduleId: module.id,
@@ -65,6 +64,8 @@ export class LoginComponent implements OnInit {
 			
 		//console.log(localStorage.getItem('auth'));
 
+	
+
 	}
 
 	ngOnInit(): void {
@@ -76,5 +77,7 @@ export class LoginComponent implements OnInit {
 			//console.log("any");
 			this.isFetching = state.isFetching;
 		});
+
+		
 	}
 }

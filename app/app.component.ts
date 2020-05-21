@@ -13,6 +13,11 @@ import { LogOut } from './flux/actions/auth.actions';
 import { SetInitialState } from './flux/actions/citas.actions';
 import { properties } from "./properties";
 
+import { alert } from "tns-core-modules/ui/dialogs";
+
+
+import { setInterval, clearInterval } from "tns-core-modules/timer";
+
 @Component({
     selector: "ns-app",
     templateUrl: "app.component.html"
@@ -33,7 +38,22 @@ export class AppComponent {
         sideDrawer.closeDrawer();
         localStorage.clear()
       }
-      properties.setLogoutAction(logoutAction)    
+      properties.setLogoutAction(logoutAction)   
+      
+      //Test info
+
+      /*const id = setInterval(() => {
+        alert({
+          title: "look",
+          message: properties.getInstance().getAppUrl(),
+          okButtonText: "Ok"
+        });
+        clearInterval(id);
+      }, 1000);*/
+
+      
+
+
    }
 
   goTo(url): void {

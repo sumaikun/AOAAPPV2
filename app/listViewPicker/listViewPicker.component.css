@@ -1,0 +1,26 @@
+#profile-container{
+    background-color: #224A50;
+}
+
+.list-group{
+    background-color: white;
+    height: 100%;
+}
+
+.list-group-item{
+  font-size: 12dp;
+}
+
+#selectedImage{
+
+}
+
+#backButton{
+  height: 65dp;
+  background-color:#286151;
+  color:white;
+}
+
+#container{
+  background-color: #437077;
+}

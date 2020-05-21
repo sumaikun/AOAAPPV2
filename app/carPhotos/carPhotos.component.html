@@ -90,9 +90,9 @@
 
               <FlexboxLayout class="button-item" alignItems="center"
                   justifyContent="space-between" (tap)="onTakePictureTap($event,'contractImage')">
-                  <Image *ngIf="frontCameraImage" [src]="contractImage" (doubleTap)="verifyThisImage(contractImage)"  >
+                  <Image *ngIf="contractImage" [src]="contractImage" (doubleTap)="verifyThisImage(contractImage)"  >
                   </Image>
-                  <Image *ngIf="!frontCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="!contractImage" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
                   <Label class="button-label" text="CONTRATO"></Label>
                   <Image class="car-icon" src="~/images/icons/document.jpg"></Image>

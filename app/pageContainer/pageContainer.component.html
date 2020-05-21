@@ -1,6 +1,6 @@
 <GridLayout rows="auto,auto">
-    <AbsoluteLayout class="app-header">
-        <Image src="~/images/icons/menu.png" class="sidedrawer-icon" (tap)="onDrawerButtonTap($event)"></Image>
+    <AbsoluteLayout class="app-header" (tap)="onDrawerButtonTap($event)">
+        <Image src="~/images/icons/menu.png" class="sidedrawer-icon" ></Image>
         <FlexboxLayout class="app-title-container" justifyContent="center"
             alignItems="center">
             <Label class="app-title" text="{{ pageTitle }}"></Label>

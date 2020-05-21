@@ -10,7 +10,8 @@ export class properties{
     private logoutAction:any;
 
     private constructor(){
-        this.appUrl = 'http://192.168.0.5:3000/api';
+        this.appUrl = 'http://sac.aoacolombia.com:3000/api';
+        //this.appUrl = 'http://192.168.0.3:3000/api'; 
     }
 
     public getAppUrl(){

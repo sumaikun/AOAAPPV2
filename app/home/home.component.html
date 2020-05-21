@@ -7,7 +7,7 @@
                 <Label id="info-user-title" text="Información de usuario"></Label>
                 
                 <FlexboxLayout id="image-container" alignItems="center" (tap)="takeSelfie()"
-                    justifyContent="center" [style.background-image]=" selfiePath ? selfiePath : null " >
+                    justifyContent="center" [style.background-image]=" selfiePath ? selfiePath : '~/images/logo.png' " >
                     <!--<Image src="{{selfiePath}}" 
                         id="pic-container"  ></Image>-->
                 </FlexboxLayout>
@@ -29,20 +29,31 @@
             </StackLayout>
             -->
 
-            <StackLayout class="options-container">
+            <StackLayout  *ngIf=" userData && userData.isAdmin === false " (tap)="registerActivity()" class="options-container">
                
-                <Label text="Registrar Ingreso" class="button-text"></Label>
+                <Label text="Registrar entrada / salida" class="button-text"></Label>
                                 
             </StackLayout>
 
-
-            <StackLayout class="options-container">
-               
-                <Label text="Registrar Salida" class="button-text"></Label>
-                            
-            </StackLayout>
             
+            <StackLayout *ngIf=" userData && userData.isAdmin === false " (tap)="seeActiveEvents()" class="options-container">
+               
+                <Label text="Ver eventos activos" class="button-text"></Label>
+                            
+            </StackLayout>         
 
         </StackLayout>
+
+        <!--
+        <ListView *ngIf=" showingListPicker === true "
+             [items]="items" (itemTap)="onItemTap($event)" class="list-group">
+            <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
+                <GridLayout>
+                    <Label [text]="item.name" class="list-group-item"></Label>
+                </GridLayout>
+            </ng-template>
+        </ListView>
+        -->
+
     </PageContainer>
 </StackLayout>

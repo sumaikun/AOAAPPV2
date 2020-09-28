@@ -15,6 +15,11 @@ import { Observable } from 'rxjs/Observable';
 import { AppState, selectCitasState } from '../flux/app.states';
 import { Store } from '@ngrx/store';
 import { IsFetching } from '../flux/actions/app.actions';
+import * as moment from "moment"
+import { SetAppointmentPictures } from '../flux/actions/apiloads.actions'
+import { selectApiloadsState } from '../flux/app.states';
+
+import { connectionType, getConnectionType }from "tns-core-modules/connectivity";
 
 const options = {
     width: 500,
@@ -49,10 +54,13 @@ export class CarphotosComponent implements OnInit {
 	prevBackImage: string;
 	prevOdometerImage: string;
 
+	pictureTimes: any;
+
 
 	urlPage: string = "https://app.aoacolombia.com/Control/operativo/";
 
 	mode: number;
+	appointment:string
 	showPictures: boolean = false;
 	getAppointmentsState: Observable<any>;
 	currentSiniester: any;
@@ -63,37 +71,54 @@ export class CarphotosComponent implements OnInit {
 
 	kilometersRegistered: number;
 
+	getApiloadsState: Observable<any>;
+
 	constructor(private page: Page, private router: RouterExtensions,
 	private route: ActivatedRoute, private store: Store<AppState>) {
 		this.getAppointmentsState = this.store.select(selectCitasState);
+		this.getApiloadsState = this.store.select(selectApiloadsState)
 	}
 
-	ngOnInit(): void {
+	ngOnInit(): void {		
 		
-		prompt({title:"¿Cual es el kilometraje actual?", defaultText:"",
-		okButtonText: "CONTINUAR", inputType:"number"}).then(r => {
-			console.log("Dialog result: " + r.result + ", text: " + r.text);
-			if(r.result)
-			{
-				this.kilometersRegistered = Number(r.text)
-			}	
-			
-		
-		});
-		 
+		this.pictureTimes = {}
+
 		this.page.actionBarHidden = true;
 
 		this.route.params.subscribe((params: Params) => {
 			console.log(params);
 			this.mode = params.mode;
+			this.appointment = params.appointment
 		});
+
+		this.getApiloadsState.subscribe( (state) =>
+		{
+			console.log("getApiloadsState",state)
+			if(state.appointmentsPictures[this.appointment])
+			{
+				console.log("api load got it",state.appointmentsPictures[this.appointment].frontCameraImage)
+			
+				this.frontCameraImage = state.appointmentsPictures[this.appointment].frontCameraImage
+				this.leftCameraImage = state.appointmentsPictures[this.appointment].leftCameraImage
+				this.rightCameraImage = state.appointmentsPictures[this.appointment].rightCameraImage
+				this.backCameraImage = state.appointmentsPictures[this.appointment].backCameraImage
+				this.odometerCameraImage = state.appointmentsPictures[this.appointment].odometerCameraImage
+				this.contractImage = state.appointmentsPictures[this.appointment].contractImage
+				this.checkCameraImage = state.appointmentsPictures[this.appointment].checkCameraImage 
+				this.inventoryCameraImage = state.appointmentsPictures[this.appointment].inventoryCameraImage
+
+				this.pictureTimes = state.appointmentsPictures[this.appointment].pictureTimes
+
+				this.kilometersRegistered = state.appointmentsPictures[this.appointment].kilometersRegistered
+			}
+		})
 
 		this.getAppointmentsState.subscribe( (state) =>
 		{
 
 				if(this.mode == 2)
 				{
-					console.log(state.siniesterInfo);
+					//console.log(state.siniesterInfo);
 
 					this.currentSiniester = state.DevolAppointments.filter( devol =>
 								state.siniesterInfo.numero == devol.numero
@@ -130,6 +155,29 @@ export class CarphotosComponent implements OnInit {
 
 		});
 
+		const kilometers = this.kilometersRegistered ? this.kilometersRegistered.toString() : null
+
+		prompt({title:"¿Cual es el kilometraje actual?", defaultText:kilometers,
+		okButtonText: "CONTINUAR", inputType:"number"}).then(r => {
+			console.log("Dialog result: " + r.result + ", text: " + r.text);
+			if(r.result)
+			{
+				if(r.text.length > 0)
+				{
+					console.log("r.text",r.text)
+					this.kilometersRegistered = Number(r.text)
+				}
+				else{
+					alert({
+						title: "espera",
+						message: "Debes poner un kilometraje valido",
+						okButtonText: "Ok"
+					});
+				}					
+			}				
+		
+		});
+
 	}
 
 
@@ -152,8 +200,9 @@ export class CarphotosComponent implements OnInit {
         }else{
         takePicture(options)
             .then((imageAsset: any) => {
-								console.log(imageAsset._android);
+								console.log(imageAsset._android,moment().format("YYYY-MM-DD HH:mm:ss"));
 
+								this.pictureTimes[imageIndex] = moment().format("YYYY-MM-DD HH:mm:ss")
 								this[imageIndex] = imageAsset._android;
 								//this.frontCameraImage = imageAsset._android;
 								console.log("try to add by reference");
@@ -182,7 +231,28 @@ export class CarphotosComponent implements OnInit {
                 okButtonText: "Ok"
             });
 		}else{
-			this.sendPics()	
+			console.log("frontCameraImage",this.frontCameraImage)
+
+			if(	!this.frontCameraImage ||
+				!this.leftCameraImage ||
+				!this.rightCameraImage ||
+				!this.backCameraImage ||
+				!this.odometerCameraImage ||
+				!this.contractImage ||
+				!this.checkCameraImage ||
+				!this.inventoryCameraImage
+			)
+			{
+				alert({
+					title: "error",
+					message: "Necesitas poner todas las imagenes para continuar",
+					okButtonText: "Ok"
+				});
+			}else{
+				this.sendPics()
+			}
+
+				
 		}
 		console.log("validate save images")
 	}
@@ -203,6 +273,21 @@ export class CarphotosComponent implements OnInit {
 
 	sendPics(){
 		console.log("Enviar fotos");
+
+		const appointmentPicture = {
+			frontCameraImage:this.frontCameraImage,
+			leftCameraImage:this.leftCameraImage,
+			rightCameraImage:this.rightCameraImage,
+			backCameraImage:this.backCameraImage,
+			odometerCameraImage:this.odometerCameraImage,
+			contractImage:this.contractImage,
+			checkCameraImage:this.checkCameraImage,
+			inventoryCameraImage:this.inventoryCameraImage,
+			pictureTimes:this.pictureTimes,
+			kilometersRegistered:this.kilometersRegistered
+		}
+
+		this.store.dispatch( new SetAppointmentPictures({ appointment:this.appointment, data: appointmentPicture }) )
 	}
 
 	serverPicLoaded(){
@@ -210,6 +295,15 @@ export class CarphotosComponent implements OnInit {
 	}
 
 	showPics(){
+		
+		const type = getConnectionType();
+
+        console.log("connection type",type)
+
+        if( type === connectionType.none || type === connectionType.bluetooth )
+        {
+
+		}
 		this.showPictures = ! this.showPictures;
 		console.log(this.showPictures);
 

@@ -13,11 +13,14 @@ export class AuthService {
 
     logIn(username: string, password: string) {
 
-        console.log("username "+username);
-        console.log("password "+password);
+        //console.log("username "+username);
+        //console.log("password "+password);
+
+        const authBody = { username, password }
+        
 
         const url = `${this.BASE_URL}/auth`;
-        return this.http.post<any>(url, { username, password });
+        return this.http.post<any>(url, authBody);
     }
 
 

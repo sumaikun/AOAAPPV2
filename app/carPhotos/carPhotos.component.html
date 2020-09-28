@@ -9,18 +9,18 @@
         style="background-color:#224A50">
           <StackLayout >
                 
-              <Button *ngIf = " frontCameraImage && leftCameraImage && rightCameraImage
-                && backCameraImage "  text="Guardar Imagenes" (tap)="sendPics()"></Button>
+              <!--<Button *ngIf = " frontCameraImage && leftCameraImage && rightCameraImage
+                && backCameraImage "  text="Guardar Imagenes" (tap)="sendPics()"></Button>-->
 
               <Button *ngIf = " mode == 2  " text="Mostrar imagenes de entrega" (tap)="showPics()"></Button>
 
               <FlexboxLayout class="button-item" alignItems="center"
-                  justifyContent="space-between" (tap)="onTakePictureTap($event,'frontCameraImage')">
+                  justifyContent="space-between">
                   <Image *ngIf="frontCameraImage" [src]="frontCameraImage" (doubleTap)="verifyThisImage(frontCameraImage)"  ></Image>
-                  <Image *ngIf="!frontCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="!frontCameraImage" (tap)="onTakePictureTap($event,'frontCameraImage')" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
-                  <Label class="button-label" text="FOTO FRONTAL"></Label>
-                  <Image class="car-icon" src="~/images/icons/frontSide.png"></Image>
+                  <Label (tap)="onTakePictureTap($event,'frontCameraImage')" class="button-label" text="FOTO FRONTAL"></Label>
+                  <Image (tap)="onTakePictureTap($event,'frontCameraImage')"  class="car-icon" src="~/images/icons/frontSide.png"></Image>
               </FlexboxLayout>
 
               <Image *ngIf = " mode == 2 && showPictures " class="car-icon image-taken"
@@ -29,12 +29,12 @@
                ></Image>
 
               <FlexboxLayout class="button-item" alignItems="center"
-                  justifyContent="space-between" (tap)="onTakePictureTap($event,'leftCameraImage')">
+                  justifyContent="space-between">
                   <Image *ngIf="leftCameraImage" [src]="leftCameraImage" (doubleTap)="verifyThisImage(leftCameraImage)"  ></Image>
-                  <Image *ngIf="!leftCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="!leftCameraImage" (tap)="onTakePictureTap($event,'leftCameraImage')" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
-                  <Label class="button-label" text="FOTO IZQUIERDA"></Label>
-                  <Image class="car-icon" src="~/images/icons/leftSide.png"></Image>
+                  <Label class="button-label" (tap)="onTakePictureTap($event,'leftCameraImage')" text="FOTO IZQUIERDA"></Label>
+                  <Image class="car-icon" (tap)="onTakePictureTap($event,'leftCameraImage')" src="~/images/icons/leftSide.png"></Image>
               </FlexboxLayout>
 
               <Image *ngIf = " mode == 2 && showPictures  " class="car-icon image-taken"
@@ -42,12 +42,12 @@
                (doubleTap)="verifyThisImage(this.prevLeftImage)"></Image>
 
               <FlexboxLayout class="button-item" alignItems="center"
-                  justifyContent="space-between" (tap)="onTakePictureTap($event,'rightCameraImage')">
+                  justifyContent="space-between" >
                   <Image *ngIf="rightCameraImage" [src]="rightCameraImage" (doubleTap)="verifyThisImage(rightCameraImage)"  ></Image>
-                  <Image *ngIf="!rightCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="!rightCameraImage" (tap)="onTakePictureTap($event,'rightCameraImage')" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
-                  <Label class="button-label" text="FOTO DERECHA"></Label>
-                  <Image class="car-icon" src="~/images/icons/rightSide.png"></Image>
+                  <Label class="button-label" (tap)="onTakePictureTap($event,'rightCameraImage')" text="FOTO DERECHA"></Label>
+                  <Image class="car-icon"  (tap)="onTakePictureTap($event,'rightCameraImage')" src="~/images/icons/rightSide.png"></Image>
               </FlexboxLayout>
 
               <Image *ngIf = " mode == 2 && showPictures  "  [hidden] = "showPictures == false" class="car-icon image-taken"
@@ -56,12 +56,12 @@
                ></Image>
 
               <FlexboxLayout class="button-item" alignItems="center"
-                  justifyContent="space-between" (tap)="onTakePictureTap($event,'backCameraImage')">
+                  justifyContent="space-between" >
                   <Image *ngIf="backCameraImage" [src]="backCameraImage" (doubleTap)="verifyThisImage(backCameraImage)"  ></Image>
-                  <Image *ngIf="!backCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="!backCameraImage" (tap)="onTakePictureTap($event,'backCameraImage')" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
-                  <Label class="button-label" text="FOTO TRASERA"></Label>
-                  <Image class="car-icon" src="~/images/icons/backSide.png"></Image>
+                  <Label class="button-label" (tap)="onTakePictureTap($event,'backCameraImage')" text="FOTO TRASERA"></Label>
+                  <Image class="car-icon" (tap)="onTakePictureTap($event,'backCameraImage')" src="~/images/icons/backSide.png"></Image>
               </FlexboxLayout>
 
               <Image *ngIf = " mode == 2 && showPictures  "  [hidden] = "showPictures == false" class="car-icon image-taken"
@@ -70,12 +70,12 @@
                ></Image>
 
               <FlexboxLayout class="button-item" alignItems="center"
-                  justifyContent="space-between" (tap)="onTakePictureTap($event,'odometerCameraImage')">
+                  justifyContent="space-between">
                   <Image *ngIf="odometerCameraImage" [src]="odometerCameraImage" (doubleTap)="verifyThisImage(odometerCameraImage)"  ></Image>
-                  <Image *ngIf="!odometerCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="!odometerCameraImage" (tap)="onTakePictureTap($event,'odometerCameraImage')" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
-                  <Label class="button-label" text="ODOMETRO"></Label>
-                  <Image class="car-icon" src="~/images/icons/odometer.png"></Image>
+                  <Label class="button-label" (tap)="onTakePictureTap($event,'odometerCameraImage')" text="ODOMETRO"></Label>
+                  <Image class="car-icon" (tap)="onTakePictureTap($event,'odometerCameraImage')" src="~/images/icons/odometer.png"></Image>
               </FlexboxLayout>
 
               <Image *ngIf = " mode == 2 && showPictures  "  [hidden] = "showPictures == false" class="car-icon image-taken"
@@ -89,31 +89,31 @@
             <StackLayout>
 
               <FlexboxLayout class="button-item" alignItems="center"
-                  justifyContent="space-between" (tap)="onTakePictureTap($event,'contractImage')">
+                  justifyContent="space-between" >
                   <Image *ngIf="contractImage" [src]="contractImage" (doubleTap)="verifyThisImage(contractImage)"  >
                   </Image>
-                  <Image *ngIf="!contractImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="!contractImage" (tap)="onTakePictureTap($event,'contractImage')" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
-                  <Label class="button-label" text="CONTRATO"></Label>
-                  <Image class="car-icon" src="~/images/icons/document.jpg"></Image>
+                  <Label class="button-label" (tap)="onTakePictureTap($event,'contractImage')" text="CONTRATO"></Label>
+                  <Image class="car-icon" (tap)="onTakePictureTap($event,'contractImage')" src="~/images/icons/document.jpg"></Image>
               </FlexboxLayout>
 
               <FlexboxLayout class="button-item" alignItems="center"
-                  justifyContent="space-between" (tap)="onTakePictureTap($event,'checkCameraImage')">
+                  justifyContent="space-between" >
                   <Image *ngIf="checkCameraImage" [src]="checkCameraImage" (doubleTap)="verifyThisImage(checkCameraImage)"  ></Image>
-                  <Image *ngIf="!checkCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="!checkCameraImage" (tap)="onTakePictureTap($event,'checkCameraImage')" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
-                  <Label class="button-label" text="LISTA DE CHEQUEO"></Label>
-                  <Image class="car-icon" src="~/images/icons/document.jpg"></Image>
+                  <Label class="button-label" (tap)="onTakePictureTap($event,'checkCameraImage')" text="LISTA DE CHEQUEO"></Label>
+                  <Image class="car-icon" (tap)="onTakePictureTap($event,'checkCameraImage')" src="~/images/icons/document.jpg"></Image>
               </FlexboxLayout>
 
               <FlexboxLayout class="button-item" alignItems="center"
-                  justifyContent="space-between" (tap)="onTakePictureTap($event,'inventoryCameraImage')">
+                  justifyContent="space-between" >
                   <Image *ngIf="inventoryCameraImage" [src]="inventoryCameraImage" (doubleTap)="verifyThisImage(inventoryCameraImage)"  ></Image>
-                  <Image *ngIf="!inventoryCameraImage" src="~/images/icons/instagram.png" width="30%" height="30%"
+                  <Image *ngIf="!inventoryCameraImage" (tap)="onTakePictureTap($event,'inventoryCameraImage')" src="~/images/icons/instagram.png" width="30%" height="30%"
                       class="pic-icon"></Image>
-                  <Label class="button-label" text="IMAGEN INVENTARIO"></Label>
-                  <Image class="car-icon" src="~/images/icons/document.jpg"></Image>
+                  <Label class="button-label" (tap)="onTakePictureTap($event,'inventoryCameraImage')" text="IMAGEN INVENTARIO"></Label>
+                  <Image class="car-icon" (tap)="onTakePictureTap($event,'inventoryCameraImage')" src="~/images/icons/document.jpg"></Image>
               </FlexboxLayout>             
 
               <Button text="GUARDAR IMAGENES" class="button-option" (tap)="saveImages()" ></Button>

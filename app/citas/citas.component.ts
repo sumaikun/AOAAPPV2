@@ -150,7 +150,7 @@ export class CitasComponent implements OnInit {
 
 				console.log("autofilter")
 
-				console.log(state)
+				//console.log(state)
 
 				this.deliverAppointments = state.DeliverAppointments.filter( data =>{ 
 					
@@ -251,7 +251,7 @@ export class CitasComponent implements OnInit {
 					if(result)
 					{
 						setTimeout( function(){
-							  self.router.navigate(["/fotos", 1]);
+							  self.router.navigate(["/fotos", 1, this.deliverAppointments[args.index].citaid]);
 								//self.router.navigateByUrl('/fotos');
 					  }, 300);
 					}
@@ -259,7 +259,7 @@ export class CitasComponent implements OnInit {
 				});
 			}
 			if(error){
-				console.log("error callback injected in singleton")
+				console.log("error callback injected in singleton",error)
 			}
 		}
 
@@ -293,7 +293,7 @@ export class CitasComponent implements OnInit {
 					if(result)
 					{
 						setTimeout( function(){
-								self.router.navigate(["/fotos", 2]);
+								self.router.navigate(["/fotos", 2, selectedCitaid]);
 								//self.router.navigateByUrl('/fotos');
 					  }, 300);
 		
@@ -301,7 +301,7 @@ export class CitasComponent implements OnInit {
 				});
 			}
 			if(error){
-				console.log("error callback injected in singleton")
+				console.log("error callback injected in singleton",error)
 			}
 		}
 

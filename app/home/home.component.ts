@@ -206,8 +206,8 @@ export class HomeComponent implements OnInit {
                 this.store.dispatch( new SetUserData(this.userData) )
 
             }).catch((err) => {
+                console.log("trying to get error",err)
                 console.log("Error -> " + err.message);
-                console.log(err)
             });
         }
     }

@@ -90,11 +90,22 @@ export class AuthEffects {
            {
              console.log("Error de servidor");
              console.log(error);
-             alert({
-                 title: "error",
-                 message: "Hubo error en el servidor o no hay conexión a internet",
-                 okButtonText: "Ok"
-             });
+             if(error.status === 401)
+             {
+              alert({
+                title: "error",
+                message: "Credenciales no validas",
+                okButtonText: "Ok"
+              });
+             }
+             else{
+              alert({
+                title: "error",
+                message: "Hubo error en el servidor o no hay conexión a internet",
+                okButtonText: "Ok"
+            });
+             }
+             
               //return of( new LogInFailure(error));
               return of(new IsFetching(false));
            })

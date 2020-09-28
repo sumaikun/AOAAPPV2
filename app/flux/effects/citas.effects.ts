@@ -26,6 +26,8 @@ import {
   SetCitasDevolucionR,
 } from '../actions/citas.actions';
 
+import { connectionType, getConnectionType }from "tns-core-modules/connectivity";
+
 @Injectable()
 export class CitasEffects {
 
@@ -123,15 +125,21 @@ export class CitasEffects {
   getAppointmentSiniesterInfo$ = this.actions$.pipe(
       ofType(CitasActionTypes.GET_CITAS_SINI_INFO),
       mergeMap((action:any) =>{
-        //console.log("in Citas Effects");
-        //console.log(action);
 
-        /*if(navigator.onLine)
+        const type = getConnectionType();
+
+        console.log("connection type",type)
+
+        if( type === connectionType.none || type === connectionType.bluetooth )
         {
-          let dispatchArray;
-          dispatchArray = [new SetCitasSiniestrosInfo(null),new IsFetching(false)];
-          return dispatchArray;
-        } */       
+          if(properties.getInstance().getCb())
+          {              
+            let cb = properties.getInstance().getCb()
+            cb(true,false)
+          }
+          const dispatchArray = [new IsFetching(false)];       
+          return dispatchArray
+        }
 
         return  this.citasService.getAppointmentsSiniesterInfo(action.payload.idAppointment).pipe(
           switchMap((data:any) =>

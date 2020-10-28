@@ -86,14 +86,14 @@ export class CarphotosComponent implements OnInit {
 		this.page.actionBarHidden = true;
 
 		this.route.params.subscribe((params: Params) => {
-			console.log(params);
+			//console.log(params);
 			this.mode = params.mode;
 			this.appointment = params.appointment
 		});
 
 		this.getApiloadsState.subscribe( (state) =>
 		{
-			console.log("getApiloadsState",state)
+			//console.log("getApiloadsState",state)
 			if(state.appointmentsPictures[this.appointment])
 			{
 				console.log("api load got it",state.appointmentsPictures[this.appointment].frontCameraImage)
@@ -106,9 +106,7 @@ export class CarphotosComponent implements OnInit {
 				this.contractImage = state.appointmentsPictures[this.appointment].contractImage
 				this.checkCameraImage = state.appointmentsPictures[this.appointment].checkCameraImage 
 				this.inventoryCameraImage = state.appointmentsPictures[this.appointment].inventoryCameraImage
-
 				this.pictureTimes = state.appointmentsPictures[this.appointment].pictureTimes
-
 				this.kilometersRegistered = state.appointmentsPictures[this.appointment].kilometersRegistered
 			}
 		})

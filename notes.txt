@@ -1,0 +1,13 @@
+dir_domicilio
+tel_domicilio
+
+Esto es domicilio, entrega
+
+dir_domiciliod
+tel_domiciliod
+
+Esto es domicilio, devolucion
+
+arribo
+
+Si es domicilio recibir kilometraje de como salio el operario, un kilometraje de como se entrego al usuario

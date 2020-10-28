@@ -11,12 +11,12 @@ import { AppState } from './flux/app.states';
 import { LogOut } from './flux/actions/auth.actions';
 import { SetInitialState } from './flux/actions/citas.actions';
 import { properties } from "./properties";
-import { alert } from "tns-core-modules/ui/dialogs";
-import { setInterval, clearInterval } from "tns-core-modules/timer";
-import { connectionType, getConnectionType, startMonitoring, stopMonitoring }from "tns-core-modules/connectivity";
+import { startMonitoring, stopMonitoring }from "tns-core-modules/connectivity";
 import * as connectivityModule from "tns-core-modules/connectivity";
 import { Observable } from "rxjs/Observable";
 import { selectApiloadsState } from './flux/app.states';
+
+import {ImageSource, fromFile, fromAsset, fromResource, fromBase64} from "tns-core-modules/image-source";
 
 @Component({
     selector: "ns-app",
@@ -51,6 +51,46 @@ export class AppComponent implements OnInit, OnDestroy {
     this.getApiloadsState.subscribe( (state) =>
 		{
       console.log("getApiloadsState",state)
+
+      const {appointmentsPictures} = state
+
+      const keys = Object.keys(appointmentsPictures)
+
+      for(let i=0; i<keys.length; i++)
+      {
+        console.log("key",keys[i],appointmentsPictures[keys[i]])
+
+        const { frontCameraImage, leftCameraImage, rightCameraImage, backCameraImage,
+          odometerCameraImage, contractImage, checkCameraImage, inventoryCameraImage  } = appointmentsPictures[keys[i]]
+        
+        const frontImageSrc: ImageSource = fromFile(frontCameraImage)
+        console.log("frontImageSrc",frontImageSrc.toBase64String("jpeg",65))
+
+        const leftImageSrc: ImageSource = fromFile(leftCameraImage)
+        console.log("leftImageSrc",leftImageSrc.toBase64String("jpeg",65))
+
+        const righttImageSrc: ImageSource = fromFile(rightCameraImage)
+        console.log("righttImageSrc",righttImageSrc.toBase64String("jpeg",65))
+
+        const backImageSrc: ImageSource = fromFile(backCameraImage)
+        console.log("backImageSrc",backImageSrc.toBase64String("jpeg",65))
+
+        const odometerImageSrc: ImageSource = fromFile(odometerCameraImage)
+        console.log("odometerImageSrc",odometerImageSrc.toBase64String("jpeg",65))
+
+        const contractImageSrc: ImageSource = fromFile(contractImage)
+        console.log("contractImageSrc",contractImageSrc.toBase64String("jpeg",65))
+
+        const checkImageSrc: ImageSource = fromFile(checkCameraImage)
+        console.log("checkImageSrc",checkImageSrc.toBase64String("jpeg",65))
+
+        const inventoryImageSrc: ImageSource = fromFile(inventoryCameraImage)
+        console.log("inventoryImageSrc",inventoryImageSrc.toBase64String("jpeg",65))
+        
+        
+      }
+      
+      
     })
 
 

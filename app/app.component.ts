@@ -61,7 +61,8 @@ export class AppComponent implements OnInit, OnDestroy {
         console.log("key",keys[i],appointmentsPictures[keys[i]])
 
         const { frontCameraImage, leftCameraImage, rightCameraImage, backCameraImage,
-          odometerCameraImage, contractImage, checkCameraImage, inventoryCameraImage  } = appointmentsPictures[keys[i]]
+          odometerCameraImage, contractImage, checkCameraImage, inventoryCameraImage,
+          mode   } = appointmentsPictures[keys[i]]
         
         const frontImageSrc: ImageSource = fromFile(frontCameraImage)
         console.log("frontImageSrc",frontImageSrc.toBase64String("jpeg",65))
@@ -69,8 +70,8 @@ export class AppComponent implements OnInit, OnDestroy {
         const leftImageSrc: ImageSource = fromFile(leftCameraImage)
         console.log("leftImageSrc",leftImageSrc.toBase64String("jpeg",65))
 
-        const righttImageSrc: ImageSource = fromFile(rightCameraImage)
-        console.log("righttImageSrc",righttImageSrc.toBase64String("jpeg",65))
+        const rightImageSrc: ImageSource = fromFile(rightCameraImage)
+        console.log("righttImageSrc",rightImageSrc.toBase64String("jpeg",65))
 
         const backImageSrc: ImageSource = fromFile(backCameraImage)
         console.log("backImageSrc",backImageSrc.toBase64String("jpeg",65))
@@ -87,7 +88,7 @@ export class AppComponent implements OnInit, OnDestroy {
         const inventoryImageSrc: ImageSource = fromFile(inventoryCameraImage)
         console.log("inventoryImageSrc",inventoryImageSrc.toBase64String("jpeg",65))
         
-        
+        const type = mode === 1 ? "deliver" : "devolution"
       }
       
       

@@ -1,12 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { Page } from "tns-core-modules/ui/page";
 import { takePicture, requestPermissions, isAvailable } from 'nativescript-camera';
-//import { ImageAsset } from 'tns-core-modules/image-asset';
-//import {ImageSource, fromFile, fromAsset, fromResource, fromBase64} from "tns-core-modules/image-source";
 import { Image } from "tns-core-modules/ui/image";
 import { RouterExtensions } from "nativescript-angular/router";
 import {  ActivatedRoute, Params } from '@angular/router';
-
 import { prompt, alert } from "tns-core-modules/ui/dialogs";
 
 
@@ -96,7 +93,7 @@ export class CarphotosComponent implements OnInit {
 			//console.log("getApiloadsState",state)
 			if(state.appointmentsPictures[this.appointment])
 			{
-				console.log("api load got it",state.appointmentsPictures[this.appointment].frontCameraImage)
+				//console.log("api load got it",state.appointmentsPictures[this.appointment].frontCameraImage)
 			
 				this.frontCameraImage = state.appointmentsPictures[this.appointment].frontCameraImage
 				this.leftCameraImage = state.appointmentsPictures[this.appointment].leftCameraImage
@@ -282,7 +279,8 @@ export class CarphotosComponent implements OnInit {
 			checkCameraImage:this.checkCameraImage,
 			inventoryCameraImage:this.inventoryCameraImage,
 			pictureTimes:this.pictureTimes,
-			kilometersRegistered:this.kilometersRegistered
+			kilometersRegistered:this.kilometersRegistered,
+			mode:this.mode
 		}
 
 		this.store.dispatch( new SetAppointmentPictures({ appointment:this.appointment, data: appointmentPicture }) )

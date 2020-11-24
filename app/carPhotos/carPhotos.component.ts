@@ -11,7 +11,6 @@ import { prompt, alert } from "tns-core-modules/ui/dialogs";
 import { Observable } from 'rxjs/Observable';
 import { AppState, selectCitasState } from '../flux/app.states';
 import { Store } from '@ngrx/store';
-import { IsFetching } from '../flux/actions/app.actions';
 import * as moment from "moment"
 import { SetAppointmentPictures } from '../flux/actions/apiloads.actions'
 import { selectApiloadsState } from '../flux/app.states';
@@ -58,6 +57,7 @@ export class CarphotosComponent implements OnInit {
 
 	mode: number;
 	appointment:string
+	isDelivery:boolean
 	showPictures: boolean = false;
 	getAppointmentsState: Observable<any>;
 	currentSiniester: any;
@@ -67,6 +67,7 @@ export class CarphotosComponent implements OnInit {
 	//
 
 	kilometersRegistered: number;
+	deliveryKilometer:number
 
 	getApiloadsState: Observable<any>;
 
@@ -83,18 +84,22 @@ export class CarphotosComponent implements OnInit {
 		this.page.actionBarHidden = true;
 
 		this.route.params.subscribe((params: Params) => {
-			//console.log(params);
+			console.log(params);
 			this.mode = params.mode;
 			this.appointment = params.appointment
+			this.isDelivery = params.isDelivery === "true"
+
+			console.log( typeof  this.isDelivery )
+
 		});
 
 		this.getApiloadsState.subscribe( (state) =>
 		{
-			//console.log("getApiloadsState",state)
+			console.log("getApiloadsState",state)
 			if(state.appointmentsPictures[this.appointment])
 			{
 				//console.log("api load got it",state.appointmentsPictures[this.appointment].frontCameraImage)
-			
+				
 				this.frontCameraImage = state.appointmentsPictures[this.appointment].frontCameraImage
 				this.leftCameraImage = state.appointmentsPictures[this.appointment].leftCameraImage
 				this.rightCameraImage = state.appointmentsPictures[this.appointment].rightCameraImage
@@ -105,6 +110,7 @@ export class CarphotosComponent implements OnInit {
 				this.inventoryCameraImage = state.appointmentsPictures[this.appointment].inventoryCameraImage
 				this.pictureTimes = state.appointmentsPictures[this.appointment].pictureTimes
 				this.kilometersRegistered = state.appointmentsPictures[this.appointment].kilometersRegistered
+				this.deliveryKilometer = state.appointmentsPictures[this.appointment].deliveryKilometer
 			}
 		})
 
@@ -152,26 +158,31 @@ export class CarphotosComponent implements OnInit {
 
 		const kilometers = this.kilometersRegistered ? this.kilometersRegistered.toString() : null
 
-		prompt({title:"¿Cual es el kilometraje actual?", defaultText:kilometers,
-		okButtonText: "CONTINUAR", inputType:"number"}).then(r => {
-			console.log("Dialog result: " + r.result + ", text: " + r.text);
-			if(r.result)
-			{
-				if(r.text.length > 0)
+
+		if(!this.isDelivery)
+		{
+			prompt({title:"¿Cual es el kilometraje actual?", defaultText:kilometers,
+			okButtonText: "CONTINUAR", inputType:"number"}).then(r => {
+				console.log("Dialog result: " + r.result + ", text: " + r.text);
+				if(r.result)
 				{
-					console.log("r.text",r.text)
-					this.kilometersRegistered = Number(r.text)
-				}
-				else{
-					alert({
-						title: "espera",
-						message: "Debes poner un kilometraje valido",
-						okButtonText: "Ok"
-					});
-				}					
-			}				
+					if(r.text.length > 0)
+					{
+						console.log("r.text",r.text)
+						this.kilometersRegistered = Number(r.text)
+					}
+					else{
+						alert({
+							title: "espera",
+							message: "Debes poner un kilometraje valido",
+							okButtonText: "Ok"
+						});
+					}					
+				}				
+			
+			});
+		}
 		
-		});
 
 	}
 
@@ -222,10 +233,18 @@ export class CarphotosComponent implements OnInit {
 		{
 			alert({
                 title: "error",
-                message: "Necesita poner el kilometraje antes de guardar las imagenes",
+                message:  !this.isDelivery && "Necesita poner el kilometraje antes de guardar las imagenes" || this.isDelivery && "Necesita poner el kilometraje final antes de guardar las imagenes",
                 okButtonText: "Ok"
             });
-		}else{
+		}
+		else if( this.isDelivery && this.deliveryKilometer ){
+			alert({
+                title: "error",
+                message: "Necesita poner el kilometraje adicional antes de guardar las imagenes",
+                okButtonText: "Ok"
+            });
+		}
+		else{
 			console.log("frontCameraImage",this.frontCameraImage)
 
 			if(	!this.frontCameraImage ||
@@ -244,6 +263,11 @@ export class CarphotosComponent implements OnInit {
 					okButtonText: "Ok"
 				});
 			}else{
+				alert({
+					title: "Bien",
+					message: "Imagenes guardadas",
+					okButtonText: "Ok"
+				});
 				this.sendPics()
 			}
 
@@ -254,9 +278,19 @@ export class CarphotosComponent implements OnInit {
 
 	registerKilometers(){
 
+		let title = ""
+
+		if(this.isDelivery)
+		{
+			title = "¿Cual es el kilometraje final?"
+		}
+		else{
+			title = "¿Cual es el kilometraje actual?"
+		}
+
 		const kilometers = this.kilometersRegistered ? this.kilometersRegistered.toString() : null
 
-		prompt({title:"¿Cual es el kilometraje actual?", defaultText:kilometers,
+		prompt({title, defaultText:kilometers,
 		 inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
 			console.log("Dialog result: " + r.result + ", text: " + r.text);
 			if(r.result)
@@ -264,6 +298,42 @@ export class CarphotosComponent implements OnInit {
 				this.kilometersRegistered = Number(r.text)
 			}
 		});
+	}
+
+	registerAditionalKilometers(){
+		
+		console.log("this.mode",this.mode)
+
+		const kilometers = this.deliveryKilometer ? this.deliveryKilometer.toString() : null
+
+		if( Number(this.mode) === 1 )
+		{
+			prompt({title:"¿cual es el kilometraje antes de ir al domicilio?", defaultText:kilometers,
+			inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
+				//console.log("Dialog result: " + r.result + ", text: " + r.text);
+				if(r.result)
+				{
+					if(r.text.length > 0)
+					{
+						this.deliveryKilometer = Number(r.text)
+					}					
+				}
+			});
+		}
+		else{
+			prompt({title:"¿cual es el kilometraje antes de ir nuevamente a los patios?", defaultText:kilometers,
+			inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
+				//console.log("Dialog result: " + r.result + ", text: " + r.text);
+				if(r.result)
+				{
+					if(r.text.length > 0)
+					{
+						this.deliveryKilometer = Number(r.text)
+					}
+				
+				}
+			});
+		}
 	}
 
 	sendPics(){

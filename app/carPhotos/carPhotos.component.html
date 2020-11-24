@@ -120,6 +120,8 @@
 
               <Button text="REGISTRAR KILOMETRAJE" class="button-option" (tap)="registerKilometers()" ></Button>
 
+              <Button *ngIf="isDelivery" text="KILOMETRAJE ADICIONAL" class="button-option" (tap)="registerAditionalKilometers()" ></Button>
+
               <Button text="REALIZAR ENCUESTA" class="button-option" (tap)="makeSurvey()" ></Button>
 
               <Button text="REALIZAR ACTA ENTREGA" class="button-option" (tap)="makeAct()" ></Button>

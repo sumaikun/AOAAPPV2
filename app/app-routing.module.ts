@@ -30,7 +30,7 @@ const routes: Routes = [
   { path: "home", component: HomeComponent },
   { path: "login", component: LoginComponent },
   { path: "citas", component: CitasComponent },
-  { path: "fotos/:mode/:appointment", component: CarphotosComponent },
+  { path: "fotos/:mode/:appointment/:isDelivery", component: CarphotosComponent },
   { path: "surveys/:mode/:appointment", component: SurveysComponent },
   { path: "listPicker/:mode/:items", component: ListViewPickerComponent },
 ];

@@ -24,28 +24,33 @@ export class CitasService {
 
     getDeliverAppointments(office: string, date: string) {
         this.validateHeaders()
-        //console.log("http options",this.httpOptions)
         const url = `${this.BASE_URL}/getAppointmentsDeliver/${office}/${date}`;
-        //const url = `${this.BASE_URL}/getAppPreparedAppointmentsDeliver/1/${date}`;
         console.log(url);
         return this.http.get<any[]>(url,this.httpOptions);
     }
 
     getDevolutionAppointments(office: string, date: string) {
         this.validateHeaders()
-        const url = `${this.BASE_URL}/getAppointmentsDevol/${office}/${date}`;
-        //const url = `${this.BASE_URL}/getAppPreparedAppointmentsDevol/1/${date}`;
+        const url = `${this.BASE_URL}/getAppointmentsDevol/${office}/${date}`;        
         console.log(url);
         return this.http.get<any[]>(url,this.httpOptions);
     }
 
     getAppointmentsSiniesterInfo(idAppointment: number){
       this.validateHeaders()
-      //console.log("http options",this.httpOptions)
-      const url = `${this.BASE_URL}/getAppointmentSiniesterInfo/${idAppointment}`;
-      //const url = `${this.BASE_URL}/getAppPreparedAppointmentsDevol/1/${date}`;
+      const url = `${this.BASE_URL}/getAppointmentSiniesterInfo/${idAppointment}`;      
       console.log(url);
       return this.http.get<any[]>(url,this.httpOptions);
+    }
+
+
+    //**  Save appointment this service is not in a effect */
+
+    saveAppointment(data: any){
+        this.validateHeaders()
+        const url = `${this.BASE_URL}/proccessAppointment`;        
+        console.log(url);
+        return this.http.post<any[]>(url,data);
     }
 
 }

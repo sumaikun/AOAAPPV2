@@ -57,7 +57,7 @@ import { AppEffects } from './flux/effects/app.effects';
 //flux persist
 
 export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
-  return localStorageSync({keys: ['auth','citas','offices','app','apiloads'],rehydrate: true})(reducer);
+  return localStorageSync({keys: ['auth','citas','offices','apiloads'],rehydrate: true})(reducer);
 }
 
 export function localStorageSyncReducer2(reducer: ActionReducer<any>): ActionReducer<any> {

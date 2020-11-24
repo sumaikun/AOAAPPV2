@@ -1,6 +1,7 @@
 import { ItemEventData } from "tns-core-modules/ui/list-view"
 import { Component, OnInit, ViewContainerRef } from "@angular/core";
 import { ModalDialogService, ModalDialogOptions } from "nativescript-angular/modal-dialog";
+import { prompt } from "tns-core-modules/ui/dialogs";
 import { Page } from "tns-core-modules/ui/page";
 import { OfficefiltermodalComponent } from "../modals/officeFilterModal.component";
 //import { PlatefiltermodalComponent } from "../modals/plateFilterModal.component";
@@ -13,10 +14,10 @@ import { Observable } from 'rxjs/Observable';
 import { AppState, selectAppState, selectAuthState, selectCitasState, selectOfficeState } from '../flux/app.states';
 import { GetCitasEntrega , GetCitasDevolucion , GetCitasSiniestrosInfo } from "../flux/actions/citas.actions";
 import { IsFetching } from '../flux/actions/app.actions';
+import { SetAppointmentPictures } from '../flux/actions/apiloads.actions'
 
 //app Singleton
 import { properties } from '../properties';
-
 //moment
 import * as moment from 'moment';
 
@@ -234,6 +235,8 @@ export class CitasComponent implements OnInit {
 	onDeliverTap(args: ItemEventData): void {
 		//console.log(this.deliverAppointments[args.index]);
 
+		const selectedCitaid = this.deliverAppointments[args.index].citaid
+
 		this.store.dispatch(new IsFetching(true));
 
 		const cb = (success , error) => {
@@ -250,10 +253,35 @@ export class CitasComponent implements OnInit {
 					//console.log(result);
 					if(result)
 					{
-						setTimeout( function(){
-							  self.router.navigate(["/fotos", 1, this.deliverAppointments[args.index].citaid]);
+						console.log("current full appointment",this.deliverAppointments[args.index])
+
+						if(this.deliverAppointments[args.index].dir_domicilio || this.deliverAppointments[args.index].tel_domicilio)
+						{	
+							prompt({title:"¿cual es el kilometraje antes de ir al domicilio?", defaultText:"0",
+							inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
+								//console.log("Dialog result: " + r.result + ", text: " + r.text);
+								if(r.result)
+								{
+									if(r.text.length > 0)
+									{
+										this.store.dispatch( new SetAppointmentPictures({ appointment:selectedCitaid, data: { deliveryKilometer: r.text  } }) )
+									}
+
+									setTimeout( function(){
+										self.router.navigate(["/fotos", 1, selectedCitaid,true]);
+										//self.router.navigateByUrl('/fotos');
+									}, 300);	
+								}
+							});
+						}
+						else{
+							setTimeout( function(){
+								self.router.navigate(["/fotos", 1, selectedCitaid,false]);
 								//self.router.navigateByUrl('/fotos');
-					  }, 300);
+							}, 300);
+						}
+						
+						
 					}
 		
 				});
@@ -292,10 +320,33 @@ export class CitasComponent implements OnInit {
 					//console.log(result);
 					if(result)
 					{
-						setTimeout( function(){
-								self.router.navigate(["/fotos", 2, selectedCitaid]);
+						console.log("current full appointment",this.devolutionAppointments[args.index])
+
+						if(this.devolutionAppointments[args.index].dir_domiciliod || this.devolutionAppointments[args.index].tel_domiciliod)
+						{
+							prompt({title:"¿cual es el kilometraje antes de ir nuevamente a los patios?", defaultText:"0",
+							inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
+								//console.log("Dialog result: " + r.result + ", text: " + r.text);
+								if(r.result)
+								{
+									if(r.text.length > 0)
+									{
+										this.store.dispatch( new SetAppointmentPictures({ appointment:selectedCitaid, data: { deliveryKilometer: r.text  } }) )
+									}
+
+									setTimeout( function(){
+										self.router.navigate(["/fotos", 2, selectedCitaid,true]);
+										//self.router.navigateByUrl('/fotos');
+								  }, 300);
+								}
+							});
+						}
+						else{
+							setTimeout( function(){
+								self.router.navigate(["/fotos", 2, selectedCitaid,false]);
 								//self.router.navigateByUrl('/fotos');
-					  }, 300);
+					  	}, 300);
+						}
 		
 					}
 				});

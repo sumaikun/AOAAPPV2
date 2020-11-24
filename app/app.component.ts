@@ -4,6 +4,9 @@ import { RadSideDrawer } from "nativescript-ui-sidedrawer";
 import * as app from "tns-core-modules/application";
 import { confirm } from "tns-core-modules/ui/dialogs";
 
+
+import { CitasService } from "./services/citas.services";
+
 //Store
 
 import { Store } from '@ngrx/store';
@@ -16,7 +19,9 @@ import * as connectivityModule from "tns-core-modules/connectivity";
 import { Observable } from "rxjs/Observable";
 import { selectApiloadsState } from './flux/app.states';
 
-import {ImageSource, fromFile, fromAsset, fromResource, fromBase64} from "tns-core-modules/image-source";
+import { ImageSource, fromFile } from "tns-core-modules/image-source";
+
+import { SetAppointmentPictures } from './flux/actions/apiloads.actions'
 
 @Component({
     selector: "ns-app",
@@ -30,12 +35,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
       private router: RouterExtensions,
-      private store: Store<AppState>
+      private store: Store<AppState>,
+      private citasService: CitasService
   ) {
       this.getApiloadsState = this.store.select(selectApiloadsState)
       console.log("App component constructor");
       const logoutAction = () => {
-        console.log("logout Action")
         this.store.dispatch( new LogOut() )
         this.store.dispatch( new SetInitialState() )
         this.router.navigateByUrl('/login')
@@ -48,9 +53,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
    ngOnInit() {
 
-    this.getApiloadsState.subscribe( (state) =>
+    this.getApiloadsState.subscribe( async(state) =>
 		{
-      console.log("getApiloadsState",state)
+      //console.log("getApiloadsState",state)
 
       const {appointmentsPictures} = state
 
@@ -60,38 +65,76 @@ export class AppComponent implements OnInit, OnDestroy {
       {
         console.log("key",keys[i],appointmentsPictures[keys[i]])
 
-        const { frontCameraImage, leftCameraImage, rightCameraImage, backCameraImage,
-          odometerCameraImage, contractImage, checkCameraImage, inventoryCameraImage,
-          mode   } = appointmentsPictures[keys[i]]
-        
-        const frontImageSrc: ImageSource = fromFile(frontCameraImage)
-        console.log("frontImageSrc",frontImageSrc.toBase64String("jpeg",65))
+        if(appointmentsPictures[keys[i]])
+        {
+          const { frontCameraImage, leftCameraImage, rightCameraImage, backCameraImage,
+            odometerCameraImage, contractImage, checkCameraImage, inventoryCameraImage,
+            mode,  pictureTimes  } = appointmentsPictures[keys[i]]
+          
+          const frontImageSrc: ImageSource = fromFile(frontCameraImage)
+          //console.log("frontImageSrc",frontImageSrc.toBase64String("jpeg",65))
+  
+          const leftImageSrc: ImageSource = fromFile(leftCameraImage)
+          //console.log("leftImageSrc",leftImageSrc.toBase64String("jpeg",65))
+  
+          const rightImageSrc: ImageSource = fromFile(rightCameraImage)
+          //console.log("righttImageSrc",rightImageSrc.toBase64String("jpeg",65))
+  
+          const backImageSrc: ImageSource = fromFile(backCameraImage)
+          //console.log("backImageSrc",backImageSrc.toBase64String("jpeg",65))
+  
+          const odometerImageSrc: ImageSource = fromFile(odometerCameraImage)
+          //console.log("odometerImageSrc",odometerImageSrc.toBase64String("jpeg",65))
+  
+          const contractImageSrc: ImageSource = fromFile(contractImage)
+          //console.log("contractImageSrc",contractImageSrc.toBase64String("jpeg",65))
+  
+          const checkImageSrc: ImageSource = fromFile(checkCameraImage)
+          //console.log("checkImageSrc",checkImageSrc.toBase64String("jpeg",65))
+  
+          const inventoryImageSrc: ImageSource = fromFile(inventoryCameraImage)
+          //console.log("inventoryImageSrc",inventoryImageSrc.toBase64String("jpeg",65))
+          
+          const type = mode === 1 ? "deliver" : "devolution"
+  
+          console.log("synchronized",appointmentsPictures[keys[i]].synchronized) 
+          
+  
+          if( this.connectionType === "Wi-Fi" || this.connectionType === "Mobile" )
+          {
+            try{       
+              const response = await this.citasService.saveAppointment({
+                appointment:keys[i],
+                type,
+                frontImageSrc:frontImageSrc.toBase64String("jpeg",65),
+                leftImageSrc:leftImageSrc.toBase64String("jpeg",65),
+                rightImageSrc:rightImageSrc.toBase64String("jpeg",65),
+                backImageSrc:backImageSrc.toBase64String("jpeg",65),
+                odometerImageSrc:odometerImageSrc.toBase64String("jpeg",65),
+                contractImageSrc:contractImageSrc.toBase64String("jpeg",65),
+                checkImageSrc:checkImageSrc.toBase64String("jpeg",65),
+                inventoryImageSrc:inventoryImageSrc.toBase64String("jpeg",65),
+                pictureTimes 
+              }).toPromise()
+    
+              console.log("aoa images response",response)
+    
+              if(response["message"]  && response["message"] === "ok")
+              {
+                console.log("dont synchro anymore")
+                /*this.store.dispatch( new SetAppointmentPictures({ appointment:keys[i],
+                   data: { ...appointmentsPictures[keys[i]], synchronized:true } }) )*/
+              }
+    
+            }catch(error){
+              console.error("error",error)
+            }
+          }else{
+            console.log("No internet")
+          }     
+        }
 
-        const leftImageSrc: ImageSource = fromFile(leftCameraImage)
-        console.log("leftImageSrc",leftImageSrc.toBase64String("jpeg",65))
-
-        const rightImageSrc: ImageSource = fromFile(rightCameraImage)
-        console.log("righttImageSrc",rightImageSrc.toBase64String("jpeg",65))
-
-        const backImageSrc: ImageSource = fromFile(backCameraImage)
-        console.log("backImageSrc",backImageSrc.toBase64String("jpeg",65))
-
-        const odometerImageSrc: ImageSource = fromFile(odometerCameraImage)
-        console.log("odometerImageSrc",odometerImageSrc.toBase64String("jpeg",65))
-
-        const contractImageSrc: ImageSource = fromFile(contractImage)
-        console.log("contractImageSrc",contractImageSrc.toBase64String("jpeg",65))
-
-        const checkImageSrc: ImageSource = fromFile(checkCameraImage)
-        console.log("checkImageSrc",checkImageSrc.toBase64String("jpeg",65))
-
-        const inventoryImageSrc: ImageSource = fromFile(inventoryCameraImage)
-        console.log("inventoryImageSrc",inventoryImageSrc.toBase64String("jpeg",65))
-        
-        const type = mode === 1 ? "deliver" : "devolution"
-      }
-      
-      
+      }      
     })
 
 
@@ -104,10 +147,16 @@ export class AppComponent implements OnInit, OnDestroy {
             case connectivityModule.connectionType.wifi:
                 this.connectionType = "Wi-Fi";
                 console.log("Connection type changed to WiFi.");
+                this.store.dispatch( new SetAppointmentPictures({ appointment:"subscriberInitation",
+                  data:  null, synchronized:true }))
+                //this.ngOnInit();
                 break;
             case connectivityModule.connectionType.mobile:
                 this.connectionType = "Mobile";
                 console.log("Connection type changed to mobile.");
+                this.store.dispatch( new SetAppointmentPictures({ appointment:"subscriberInitation",
+                  data:  null, synchronized:true }))
+                //this.ngOnInit();
                 break;
             case connectivityModule.connectionType.bluetooth:
                 this.connectionType = "Bluetooth";
@@ -151,4 +200,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   }
 
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
 }
+
+//Citas de entrega,  Si es domicilio en la interfaz de seleccionar cita al seleccionar verificarlo y preguntarle kilometraje de salida de patio, kilometraje_inicial_servicio
+//antes de las imagenes preguntar el kilometraje de llegada
+
+//En devolución es al revez kilometraje de devolución , y el kilometraje de llegada a la oficina o arribo a patio

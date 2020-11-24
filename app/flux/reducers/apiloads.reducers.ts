@@ -15,7 +15,9 @@ export function reducer(state = initialState, action: All): State {
 
       state = {
         ...state,
-        appointmentsPictures: {  ...state.appointmentsPictures, [action.payload["appointment"]] : action.payload["data"]  } 
+        appointmentsPictures: {  ...state.appointmentsPictures,
+           [action.payload["appointment"]] : {  ...[action.payload["appointment"]], ...action.payload["data"]  }
+        } 
       };
       
       return state;

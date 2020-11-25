@@ -26,6 +26,7 @@
         "@ngrx/store": "^8.1.0",
         "@nstudio/nativescript-checkbox": "^1.0.0",
         "@progress-nativechat/nativescript-nativechat": "2.0.4",
+        "image-size": "^0.9.3",
         "kinvey-nativescript-sdk": "4.2.1",
         "moment": "^2.25.3",
         "nativescript-accelerometer": "2.0.1",

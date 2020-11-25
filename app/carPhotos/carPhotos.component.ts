@@ -17,6 +17,9 @@ import { selectApiloadsState } from '../flux/app.states';
 
 import { connectionType, getConnectionType }from "tns-core-modules/connectivity";
 
+
+import { fromAsset } from "tns-core-modules/image-source";
+
 const options = {
     width: 500,
     height: 500,
@@ -205,18 +208,37 @@ export class CarphotosComponent implements OnInit {
             });
         }else{
         takePicture(options)
-            .then((imageAsset: any) => {
-								console.log(imageAsset._android,moment().format("YYYY-MM-DD HH:mm:ss"));
+            .then(async (imageAsset: any) => {
 
-								this.pictureTimes[imageIndex] = moment().format("YYYY-MM-DD HH:mm:ss")
-								this[imageIndex] = imageAsset._android;
-								//this.frontCameraImage = imageAsset._android;
-								console.log("try to add by reference");
-								/*fromAsset(imageAsset).then(res => {
-											console.log(res);
-			                let base64 = res.toBase64String("jpeg", 100);
-		            });*/
+				const res = await fromAsset(imageAsset)
+									
+				console.log("fromAsset",res.height,res.width);
 
+				if( res.width < res.height )
+				{
+					alert({
+						title: "espera",
+						message: "Solo toma las imagenes de forma lateral",
+						okButtonText: "Ok"
+					});
+				}
+				else{
+					console.log(imageAsset._android,moment().format("YYYY-MM-DD HH:mm:ss"));
+
+					//const dimensions = sizeOf.default(imageAsset._android)
+
+					console.log("dimensions",imageAsset,imageIndex)
+
+					this.pictureTimes[imageIndex] = moment().format("YYYY-MM-DD HH:mm:ss")
+					this[imageIndex] = imageAsset._android;
+
+					console.log("this[imageIndex]",this.frontCameraImage.height)
+
+					//this.frontCameraImage = imageAsset._android;
+					console.log("try to add by reference");
+				}				
+								
+							
             }, (error) => {
                 console.log("Error: " + error);
 			});

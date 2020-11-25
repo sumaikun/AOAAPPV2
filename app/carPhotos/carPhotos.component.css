@@ -29,19 +29,38 @@
 
 .pic-icon{
 	position: absolute;
-	margin-left: -16dp !important;
+	/*margin-left: -16dp !important;*/
 }
 
 .car-icon{
 	position: absolute;
 	margin-right: 5dp;
+	width: 50%;
+	height: 50%;
 }
 
 .button-label{
 	position: absolute;
-	margin-right:12dp;
+	margin-left:42dp;
 	font-family: Roboto-Medium;
+	font-size: 10dp;
+	width: 100dp;
 }
+
+/*.car-icon{
+	position: absolute;
+	margin-right: 5dp;
+	width: 50%;
+	height: 50%;
+}*
+
+/*.button-label{
+	position: absolute;
+	margin-left:52dp;
+	width: 150dp;
+	font-family: Roboto-Medium;
+	v
+}*/
 
 .image-taken{
 	width: 35%;

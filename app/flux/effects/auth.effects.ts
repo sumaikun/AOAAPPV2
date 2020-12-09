@@ -21,7 +21,8 @@ import {
   SetSurveys,
   SetAct,
   SetEventTypes,
-  SetRegisterTypes
+  SetRegisterTypes,
+  SetDevolutionStates
 } from '../actions/app.actions';
 
 import {
@@ -72,6 +73,7 @@ export class AuthEffects {
                     new SetCitasSiniestrosInfo(data.devolInfo),
                     new SetEventTypes(data.eventTypes),
                     new SetRegisterTypes(data.activitiesTypes),
+                    new SetDevolutionStates(data.devolutionStates),
                     new IsFetching(false)                   
                   ];
 

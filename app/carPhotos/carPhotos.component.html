@@ -131,6 +131,8 @@
                src="https://app.aoacolombia.com/Control/operativo/siniestro/185/1850715/15677007113374671192359385952227.jpg"></Image>
                -->
 
+               <Button *ngIf = " mode == 2  " text="Asignar estado" (tap)="assignState()"></Button>
+
             </StackLayout>
           </ScrollView>
     </TabView>

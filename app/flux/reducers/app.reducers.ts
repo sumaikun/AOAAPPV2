@@ -8,6 +8,7 @@ export interface State {
     eventTypes:Array<any>
     activitiesTypes:Array<any>
     activeEvents:Array<any>
+    devolutionStates:Array<any>
 }
 
 export const initialState: State = {
@@ -16,7 +17,8 @@ export const initialState: State = {
     act:{},
     eventTypes:[],
     activitiesTypes:[],
-    activeEvents:[]
+    activeEvents:[],
+    devolutionStates:[]
 };
 
 export function reducer(state = initialState, action: All): State {
@@ -74,6 +76,15 @@ export function reducer(state = initialState, action: All): State {
       state = {
         ...state,
         activeEvents: action.payload
+      };
+      
+      return state;
+    }
+    case AppActionTypes.SET_DEVOLUTION_STATES: {
+
+      state = {
+        ...state,
+        devolutionStates: action.payload
       };
       
       return state;

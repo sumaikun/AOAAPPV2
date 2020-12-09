@@ -1,0 +1,6 @@
+<StackLayout orientation="vertical" class="modal-container">
+   
+    <ListPicker id="cityPicker" [items]="listPickerStates" [(ngModel)]="selectedListPickerIndex"></ListPicker>
+    <Button text="Asignar" class="filter-button" (tap)="assignState()"></Button>
+    <!--<Button class="btn btn-outline" text="Cerrar" (tap)="close()"></Button>-->
+</StackLayout>

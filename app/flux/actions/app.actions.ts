@@ -9,7 +9,8 @@ export enum AppActionTypes {
   SET_REGISTER_TYPES = '[App] REGISTER_TYPES',
   SET_ACTIVE_EVENTS = '[App] ACTIVE_EVENTS',
   GET_ACTIVE_EVENTS = '[App] GET_ACTIVE_EVENTS',
-  CREATE_EVENT = '[App] CREATE_EVENT'
+  CREATE_EVENT = '[App] CREATE_EVENT',
+  SET_DEVOLUTION_STATES = '[App] SET_DEVOLUTION_STATES',
 }
 
 export class IsFetching implements Action {
@@ -52,6 +53,11 @@ export class SetActiveEvents implements Action {
   constructor(public payload: any[]) { }
 }
 
+export class SetDevolutionStates implements Action {
+  readonly type = AppActionTypes.SET_DEVOLUTION_STATES;
+  constructor(public payload: any) {}
+}
+
 export type All =
     | IsFetching
     | SetSurveys 
@@ -59,4 +65,5 @@ export type All =
     | SetEventTypes
     | SetRegisterTypes
     | CreateEvent
-    | SetActiveEvents;
+    | SetActiveEvents
+    | SetDevolutionStates;

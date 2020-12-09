@@ -38,7 +38,7 @@ import { PlatefiltermodalComponent } from "./modals/plateFilterModal.component";
 import { ActivitiesRegistermodalComponent } from "./modals/activitiesRegister.component";
 import { InfoappointmentComponent } from "./infoAppointmentModal/infoAppointment.component";
 import { ModalDialogService } from "nativescript-angular/modal-dialog";
-
+import { StatesDevolutionModalComponent } from "./modals/statesDevolutionModal.component";
 
 //flux
 import { AuthService } from './services/auth.service';
@@ -97,7 +97,8 @@ const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer,loca
         ActivitiesRegistermodalComponent,
         WatchpicComponent,
         SurveysComponent,
-        ListViewPickerComponent
+        ListViewPickerComponent,
+        StatesDevolutionModalComponent
     ],
     providers: [
       AuthService,
@@ -111,7 +112,8 @@ const metaReducers: Array<MetaReducer<any, any>> = [localStorageSyncReducer,loca
   		OfficefiltermodalComponent,
   		PlatefiltermodalComponent,
       InfoappointmentComponent,
-      ActivitiesRegistermodalComponent
+      ActivitiesRegistermodalComponent,
+      StatesDevolutionModalComponent
   	],
     schemas: [
         NO_ERRORS_SCHEMA

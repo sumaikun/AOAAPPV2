@@ -1,12 +1,12 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewContainerRef } from "@angular/core";
 import { Page } from "tns-core-modules/ui/page";
 import { takePicture, requestPermissions, isAvailable } from 'nativescript-camera';
 import { Image } from "tns-core-modules/ui/image";
 import { RouterExtensions } from "nativescript-angular/router";
 import {  ActivatedRoute, Params } from '@angular/router';
 import { prompt, alert } from "tns-core-modules/ui/dialogs";
-
-
+import { ModalDialogService, ModalDialogOptions } from "nativescript-angular/modal-dialog";
+import { StatesDevolutionModalComponent } from "../modals/statesDevolutionModal.component";
 //flux
 import { Observable } from 'rxjs/Observable';
 import { AppState, selectCitasState } from '../flux/app.states';
@@ -74,8 +74,17 @@ export class CarphotosComponent implements OnInit {
 
 	getApiloadsState: Observable<any>;
 
+	devolutionState: string
+
+	options: ModalDialogOptions = {
+		viewContainerRef: this.viewContainerRef,
+		fullscreen: false,
+		context: {}
+	};
+
 	constructor(private page: Page, private router: RouterExtensions,
-	private route: ActivatedRoute, private store: Store<AppState>) {
+		private modalService: ModalDialogService, private viewContainerRef: ViewContainerRef,
+		private route: ActivatedRoute, private store: Store<AppState>) {
 		this.getAppointmentsState = this.store.select(selectCitasState);
 		this.getApiloadsState = this.store.select(selectApiloadsState)
 	}
@@ -409,6 +418,24 @@ export class CarphotosComponent implements OnInit {
 
 	makeAct(){
 		this.router.navigateByUrl('/surveys/act/1');
+	}
+
+	assignState(){
+		this.modalService.showModal(StatesDevolutionModalComponent, this.options).then((result: any) => {
+
+			//console.log("after modal");
+			//console.log(result);
+
+			if(result)
+			{
+				console.log("state result",result)
+
+				
+			}
+
+
+
+		});
 	}
 
 }

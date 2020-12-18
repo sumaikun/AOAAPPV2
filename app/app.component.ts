@@ -69,7 +69,7 @@ export class AppComponent implements OnInit, OnDestroy {
         {
           const { frontCameraImage, leftCameraImage, rightCameraImage, backCameraImage,
             odometerCameraImage, contractImage, checkCameraImage, inventoryCameraImage,
-            mode,  pictureTimes  } = appointmentsPictures[keys[i]]
+            mode,  pictureTimes, kilometersRegistered, deliveryKilometer, devolutionState  } = appointmentsPictures[keys[i]]
           
           const frontImageSrc: ImageSource = fromFile(frontCameraImage)
           //console.log("frontImageSrc",frontImageSrc.toBase64String("jpeg",65))
@@ -114,7 +114,10 @@ export class AppComponent implements OnInit, OnDestroy {
                 contractImageSrc:contractImageSrc.toBase64String("jpeg",65),
                 checkImageSrc:checkImageSrc.toBase64String("jpeg",65),
                 inventoryImageSrc:inventoryImageSrc.toBase64String("jpeg",65),
-                pictureTimes 
+                pictureTimes,
+                kilometersRegistered,
+                deliveryKilometer,
+                devolutionState
               }).toPromise()
     
               console.log("aoa images response",response)

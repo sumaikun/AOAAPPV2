@@ -57,11 +57,11 @@ import { AppEffects } from './flux/effects/app.effects';
 //flux persist
 
 export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
-  return localStorageSync({keys: ['auth','citas','offices','apiloads'],rehydrate: true})(reducer);
+  return localStorageSync({keys: ['auth','citas','offices','apiloads','app'],rehydrate: true})(reducer);
 }
 
 export function localStorageSyncReducer2(reducer: ActionReducer<any>): ActionReducer<any> {
-  return localStorageSync({keys: [{app: ['surveys'] }]})(reducer);
+  return localStorageSync({keys: [{app: ['surveys','devolutionStates'],rehydrate: true }]})(reducer);
 }
 
 import { localStorageSync } from 'ngrx-store-localstorage';

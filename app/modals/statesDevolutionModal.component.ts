@@ -18,6 +18,7 @@ export class StatesDevolutionModalComponent implements OnInit {
 	listPickerStates: Array<string> = [];
 	selectedListPickerIndex: number = 0;	
 	getAppState: Observable<any>;
+	devolutionStates: Array<any> = []
 
 
 	constructor( private store: Store<AppState>, private params: ModalDialogParams ) {
@@ -30,10 +31,16 @@ export class StatesDevolutionModalComponent implements OnInit {
         
         this.getAppState.subscribe( (state) =>
 		{
+			console.log("app state",state)
 
 			if(state.devolutionStates)
 			{
-				this.listPickerStates = state.devolutionStates
+				console.log("state.devolutionStates",state.devolutionStates)
+				this.devolutionStates = state.devolutionStates
+				state.devolutionStates.forEach( office => {
+					//console.log(office);
+					this.listPickerStates.push(office.name);
+				});
 			}
 			
 			
@@ -43,7 +50,9 @@ export class StatesDevolutionModalComponent implements OnInit {
 
     
     assignState():void {
-        this.params.closeCallback({state:this.selectedListPickerIndex});
+		console.log("state:this.selectedListPickerIndex",this.selectedListPickerIndex)
+		const state = this.devolutionStates[this.selectedListPickerIndex]
+        this.params.closeCallback({state});
     }
 
 }

@@ -275,8 +275,15 @@ export class CarphotosComponent implements OnInit {
                 okButtonText: "Ok"
             });
 		}
+		else if( Number(this.mode) === 2 && !this.devolutionState ){
+			alert({
+                title: "error",
+                message: "Necesitas poner un estado de devolución",
+                okButtonText: "Ok"
+            });
+		}
 		else{
-			console.log("frontCameraImage",this.frontCameraImage)
+			//console.log("frontCameraImage",this.frontCameraImage)
 
 			if(	!this.frontCameraImage ||
 				!this.leftCameraImage ||
@@ -381,7 +388,9 @@ export class CarphotosComponent implements OnInit {
 			inventoryCameraImage:this.inventoryCameraImage,
 			pictureTimes:this.pictureTimes,
 			kilometersRegistered:this.kilometersRegistered,
-			mode:this.mode
+			mode:this.mode,
+			deliveryKilometer:this.deliveryKilometer,
+			devolutionState:this.devolutionState
 		}
 
 		this.store.dispatch( new SetAppointmentPictures({ appointment:this.appointment, data: appointmentPicture }) )
@@ -430,7 +439,7 @@ export class CarphotosComponent implements OnInit {
 			{
 				console.log("state result",result)
 
-				
+				this.devolutionState = result.id
 			}
 
 

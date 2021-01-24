@@ -11,7 +11,7 @@ import { RouterExtensions } from "nativescript-angular/router";
 //flux
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
-import { AppState, selectAppState, selectAuthState, selectCitasState, selectOfficeState } from '../flux/app.states';
+import { AppState, selectAppState, selectAuthState, selectCitasState, selectOfficeState , selectApiloadsState } from '../flux/app.states';
 import { GetCitasEntrega , GetCitasDevolucion , GetCitasSiniestrosInfo } from "../flux/actions/citas.actions";
 import { IsFetching } from '../flux/actions/app.actions';
 import { SetAppointmentPictures } from '../flux/actions/apiloads.actions'
@@ -33,6 +33,7 @@ export class CitasComponent implements OnInit {
 	getAppointmentsState: Observable<any>;
 	getAuthState: Observable<any>;
 	getOfficeState: Observable<any>;
+	getApiloadsState: Observable<any>;
 
 	isFetching: boolean | null;
 
@@ -45,6 +46,7 @@ export class CitasComponent implements OnInit {
 	infoOffice: string;
 
 	isAdmin: boolean;
+	userId: string;
 
 	offices: any[] = [];
 
@@ -55,6 +57,8 @@ export class CitasComponent implements OnInit {
 	};
 
 	tabSelectedIndex: number;
+	
+	appointmentsPictures:any
 
 
 	constructor(private page: Page, private modalService: ModalDialogService
@@ -64,6 +68,7 @@ export class CitasComponent implements OnInit {
 				this.getAppointmentsState = this.store.select(selectCitasState);
 				this.getAuthState = this.store.select(selectAuthState);
 				this.getOfficeState = this.store.select(selectOfficeState);
+				this.getApiloadsState = this.store.select(selectApiloadsState)
 	}
 
 	ngOnInit(): void {
@@ -83,7 +88,7 @@ export class CitasComponent implements OnInit {
 
 		this.getAuthState.subscribe( (state) =>
 		{
-			//console.log("authState",state)
+			console.log("authState",state)
 			//let officeFiltered = this.offices.filter( data => data.id === state.userData.datosFlota.oficina );
 			if(state.userData.isAdmin)
 			{
@@ -92,6 +97,8 @@ export class CitasComponent implements OnInit {
 			else{
 				this.isAdmin = false;
 			}
+
+			this.userId = state.userData.id
 			
 		});
 
@@ -116,6 +123,14 @@ export class CitasComponent implements OnInit {
 			
 		});
 
+		this.getApiloadsState.subscribe( (state) => {
+			const { appointmentsPictures } = state
+
+			//console.log("appointmentsPictures",appointmentsPictures)
+
+			this.appointmentsPictures = appointmentsPictures
+		})
+
 		this.getAppointmentsState.subscribe( (state) =>
 		{
 
@@ -135,14 +150,35 @@ export class CitasComponent implements OnInit {
 
 				this.infoDate = state.filteredDate;
 
+				console.log("this.appointmentsPictures",this.appointmentsPictures)
 
-				this.deliverAppointments = state.DeliverAppointments.filter( data =>{ return data.oficina === officeFiltered[0].id  &&
-					moment(data.fecha).format("YYYY-MM-DD") === moment(this.infoDate.toString()).format("YYYY-MM-DD") })
+
+
+				this.deliverAppointments = state.DeliverAppointments.filter( data =>{ 
+
+					/*if( this.appointmentsPictures[String(data.citaid)] )
+					{
+						return data.oficina === officeFiltered[0].id  && moment(data.fecha).format("YYYY-MM-DD") === moment(this.infoDate.toString()).format("YYYY-MM-DD") && !this.appointmentsPictures[String(data.citaid)].synchronized
+					}else{
+						return data.oficina === officeFiltered[0].id  && moment(data.fecha).format("YYYY-MM-DD") === moment(this.infoDate.toString()).format("YYYY-MM-DD")
+					}*/
+					return data.oficina === officeFiltered[0].id  && moment(data.fecha).format("YYYY-MM-DD") === moment(this.infoDate.toString()).format("YYYY-MM-DD")
+				})
+
+				//console.log("deliverAppointments",this.deliverAppointments,state.DeliverAppointments)
 
 				this.devolutionAppointments = state.DevolAppointments.filter( data => {
-					//console.log(moment(data.fec_devolucion).format("YYYY-MM-DD"))
+					/*if( this.appointmentsPictures[String(data.citaid)] )
+					{
+						return data.oficina === officeFiltered[0].id &&
+						moment(data.fec_devolucion).format("YYYY-MM-DD") === moment(this.infoDate.toString()).format("YYYY-MM-DD") && !this.appointmentsPictures[String(data.citaid)].synchronized
+					}else{
+						return data.oficina === officeFiltered[0].id &&
+						moment(data.fec_devolucion).format("YYYY-MM-DD") === moment(this.infoDate.toString()).format("YYYY-MM-DD")
+					}*/					
 					return data.oficina === officeFiltered[0].id &&
-					moment(data.fec_devolucion).format("YYYY-MM-DD") === moment(this.infoDate.toString()).format("YYYY-MM-DD") })
+						moment(data.fec_devolucion).format("YYYY-MM-DD") === moment(this.infoDate.toString()).format("YYYY-MM-DD")
+				})
 
 			}
 			else{
@@ -150,6 +186,8 @@ export class CitasComponent implements OnInit {
 				//console.log(moment(new Date()).format("YYYY-MM-DD"))
 
 				console.log("autofilter")
+
+				console.log("this.appointmentsPictures",this.appointmentsPictures)
 
 				//console.log(state)
 
@@ -246,38 +284,55 @@ export class CitasComponent implements OnInit {
 				this.tabSelectedIndex = 0					
 
 				this.options.context.appointment = this.deliverAppointments[args.index].citaid
+				this.options.context.plate = this.deliverAppointments[args.index].placa
+				this.options.context.mode = 1
+				this.options.context.userId = this.userId
+
 				//console.log("options",this.options)
 				this.modalService.showModal(InfoappointmentComponent, this.options).then((result: any) => {
 					let self = this;
 					console.log("deliver tap");
-					//console.log(result);
+					console.log(result);
 					if(result)
 					{
-						console.log("current full appointment",this.deliverAppointments[args.index])
+						//console.log("current full appointment",this.deliverAppointments[args.index])
+						const defaultVlue = result.foundKilometer ? result.foundKilometer : "0"
 
 						if(this.deliverAppointments[args.index].dir_domicilio || this.deliverAppointments[args.index].tel_domicilio)
 						{	
-							prompt({title:"¿cual es el kilometraje antes de ir al domicilio?", defaultText:"0",
-							inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
-								//console.log("Dialog result: " + r.result + ", text: " + r.text);
-								if(r.result)
-								{
-									if(r.text.length > 0)
+							if(result.proccess === "assign" )
+							{
+								prompt({title:"¿cual es el kilometraje antes de ir al domicilio?", defaultText:defaultVlue,
+								inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
+									//console.log("Dialog result: " + r.result + ", text: " + r.text);
+									if(r.result)
 									{
-										this.store.dispatch( new SetAppointmentPictures({ appointment:selectedCitaid, data: { deliveryKilometer: r.text  } }) )
-									}
+										if(r.text.length > 0)
+										{
+											this.store.dispatch( new SetAppointmentPictures({ appointment:selectedCitaid, data: {   ...this.appointmentsPictures[selectedCitaid], deliveryKilometer: r.text, kilometerLimit : defaultVlue, proccess:result.proccesss  } }) )
+										}
 
-									setTimeout( function(){
-										self.router.navigate(["/fotos", 1, selectedCitaid,true]);
-										//self.router.navigateByUrl('/fotos');
-									}, 300);	
-								}
-							});
+										setTimeout( function(){
+											self.router.navigate(["/fotos", 1, selectedCitaid,true]);
+											//self.router.navigateByUrl('/fotos');
+										}, 300);	
+									}
+								});
+							}else{
+								this.store.dispatch( new SetAppointmentPictures({ appointment:selectedCitaid, data: {   ...this.appointmentsPictures[selectedCitaid], kilometerLimit : defaultVlue, proccess:result.proccesss  } }) )
+								setTimeout( function(){
+									self.router.navigate(["/fotos", 1, selectedCitaid,true]);
+									//self.router.navigateByUrl('/fotos');
+								}, 300);
+							}
+							
 						}
 						else{
+							this.store.dispatch( new SetAppointmentPictures({ appointment:selectedCitaid, data: {  ...this.appointmentsPictures[selectedCitaid], kilometerLimit : defaultVlue, proccess:result.proccesss  } }) )
 							setTimeout( function(){
 								self.router.navigate(["/fotos", 1, selectedCitaid,false]);
 								//self.router.navigateByUrl('/fotos');
+								
 							}, 300);
 						}
 						
@@ -314,6 +369,10 @@ export class CitasComponent implements OnInit {
 			{
 				this.tabSelectedIndex = 1
 				this.options.context.appointment = selectedCitaid
+				this.options.context.plate = this.devolutionAppointments[args.index].placa
+				this.options.context.mode = 2
+				this.options.context.userId = this.userId
+
 				this.modalService.showModal(InfoappointmentComponent, this.options).then((result: any) => {
 					let self = this;
 					console.log("devolution tap");
@@ -322,29 +381,43 @@ export class CitasComponent implements OnInit {
 					{
 						console.log("current full appointment",this.devolutionAppointments[args.index])
 
-						if(this.devolutionAppointments[args.index].dir_domiciliod || this.devolutionAppointments[args.index].tel_domiciliod)
-						{
-							prompt({title:"¿cual es el kilometraje antes de ir nuevamente a los patios?", defaultText:"0",
-							inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
-								//console.log("Dialog result: " + r.result + ", text: " + r.text);
-								if(r.result)
-								{
-									if(r.text.length > 0)
-									{
-										this.store.dispatch( new SetAppointmentPictures({ appointment:selectedCitaid, data: { deliveryKilometer: r.text  } }) )
-									}
+						const defaultVlue = result.foundKilometer ? result.foundKilometer : "0"
 
-									setTimeout( function(){
-										self.router.navigate(["/fotos", 2, selectedCitaid,true]);
-										//self.router.navigateByUrl('/fotos');
-								  }, 300);
-								}
-							});
+						if( this.devolutionAppointments[args.index].dir_domiciliod || this.devolutionAppointments[args.index].tel_domiciliod)
+						{
+							if(result.proccess === "assign" )
+							{
+								prompt({title:"¿cual es el kilometraje antes de ir nuevamente a los patios?", defaultText:defaultVlue,
+								inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
+									//console.log("Dialog result: " + r.result + ", text: " + r.text);
+									if(r.result)
+									{
+										if(r.text.length > 0)
+										{
+											this.store.dispatch( new SetAppointmentPictures({  appointment:selectedCitaid, data: {   ...this.appointmentsPictures[selectedCitaid], deliveryKilometer: r.text , kilometerLimit : defaultVlue, proccess:result.proccess  } }) )
+										}
+
+										setTimeout( function(){
+											self.router.navigate(["/fotos", 2, selectedCitaid,true]);
+											//self.router.navigateByUrl('/fotos');
+										}, 300);
+									}
+								});
+							}else{
+								this.store.dispatch( new SetAppointmentPictures({  appointment:selectedCitaid, data: {  ...this.appointmentsPictures[selectedCitaid], kilometerLimit : defaultVlue, proccess:result.proccesss  } }) )
+								setTimeout( function(){
+									self.router.navigate(["/fotos", 2, selectedCitaid,true]);
+									//self.router.navigateByUrl('/fotos');
+								}, 300);
+							}
+							
 						}
 						else{
+							this.store.dispatch( new SetAppointmentPictures({   appointment:selectedCitaid, data: {  ...this.appointmentsPictures[selectedCitaid], kilometerLimit : defaultVlue, proccess:result.proccesss  } }) )
 							setTimeout( function(){
 								self.router.navigate(["/fotos", 2, selectedCitaid,false]);
 								//self.router.navigateByUrl('/fotos');
+								
 					  	}, 300);
 						}
 		

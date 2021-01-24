@@ -5,7 +5,7 @@ import * as app from "tns-core-modules/application";
 import { confirm } from "tns-core-modules/ui/dialogs";
 
 
-import { CitasService } from "./services/citas.services";
+//import { CitasService } from "./services/citas.services";
 
 //Store
 
@@ -17,10 +17,6 @@ import { properties } from "./properties";
 import { startMonitoring, stopMonitoring }from "tns-core-modules/connectivity";
 import * as connectivityModule from "tns-core-modules/connectivity";
 import { Observable } from "rxjs/Observable";
-import { selectApiloadsState } from './flux/app.states';
-
-import { ImageSource, fromFile } from "tns-core-modules/image-source";
-
 import { SetAppointmentPictures } from './flux/actions/apiloads.actions'
 
 @Component({
@@ -33,12 +29,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
   getApiloadsState: Observable<any>;
 
+  getAuthState: Observable<any>;
+
+  getAppointmentsState: Observable<any>;
+
+  deliverAppointments: any[]
+
+  devolutionAppointments: any[]
+
   constructor(
       private router: RouterExtensions,
       private store: Store<AppState>,
-      private citasService: CitasService
   ) {
-      this.getApiloadsState = this.store.select(selectApiloadsState)
       console.log("App component constructor");
       const logoutAction = () => {
         this.store.dispatch( new LogOut() )
@@ -52,94 +54,6 @@ export class AppComponent implements OnInit, OnDestroy {
    }
 
    ngOnInit() {
-
-    this.getApiloadsState.subscribe( async(state) =>
-		{
-      //console.log("getApiloadsState",state)
-
-      const {appointmentsPictures} = state
-
-      const keys = Object.keys(appointmentsPictures)
-
-      for(let i=0; i<keys.length; i++)
-      {
-        console.log("key",keys[i],appointmentsPictures[keys[i]])
-
-        if(appointmentsPictures[keys[i]])
-        {
-          const { frontCameraImage, leftCameraImage, rightCameraImage, backCameraImage,
-            odometerCameraImage, contractImage, checkCameraImage, inventoryCameraImage,
-            mode,  pictureTimes, kilometersRegistered, deliveryKilometer, devolutionState  } = appointmentsPictures[keys[i]]
-          
-          const frontImageSrc: ImageSource = fromFile(frontCameraImage)
-          //console.log("frontImageSrc",frontImageSrc.toBase64String("jpeg",65))
-  
-          const leftImageSrc: ImageSource = fromFile(leftCameraImage)
-          //console.log("leftImageSrc",leftImageSrc.toBase64String("jpeg",65))
-  
-          const rightImageSrc: ImageSource = fromFile(rightCameraImage)
-          //console.log("righttImageSrc",rightImageSrc.toBase64String("jpeg",65))
-  
-          const backImageSrc: ImageSource = fromFile(backCameraImage)
-          //console.log("backImageSrc",backImageSrc.toBase64String("jpeg",65))
-  
-          const odometerImageSrc: ImageSource = fromFile(odometerCameraImage)
-          //console.log("odometerImageSrc",odometerImageSrc.toBase64String("jpeg",65))
-  
-          const contractImageSrc: ImageSource = fromFile(contractImage)
-          //console.log("contractImageSrc",contractImageSrc.toBase64String("jpeg",65))
-  
-          const checkImageSrc: ImageSource = fromFile(checkCameraImage)
-          //console.log("checkImageSrc",checkImageSrc.toBase64String("jpeg",65))
-  
-          const inventoryImageSrc: ImageSource = fromFile(inventoryCameraImage)
-          //console.log("inventoryImageSrc",inventoryImageSrc.toBase64String("jpeg",65))
-          
-          const type = mode === 1 ? "deliver" : "devolution"
-  
-          console.log("synchronized",appointmentsPictures[keys[i]].synchronized) 
-          
-  
-          if( this.connectionType === "Wi-Fi" || this.connectionType === "Mobile" )
-          {
-            try{       
-              const response = await this.citasService.saveAppointment({
-                appointment:keys[i],
-                type,
-                frontImageSrc:frontImageSrc.toBase64String("jpeg",65),
-                leftImageSrc:leftImageSrc.toBase64String("jpeg",65),
-                rightImageSrc:rightImageSrc.toBase64String("jpeg",65),
-                backImageSrc:backImageSrc.toBase64String("jpeg",65),
-                odometerImageSrc:odometerImageSrc.toBase64String("jpeg",65),
-                contractImageSrc:contractImageSrc.toBase64String("jpeg",65),
-                checkImageSrc:checkImageSrc.toBase64String("jpeg",65),
-                inventoryImageSrc:inventoryImageSrc.toBase64String("jpeg",65),
-                pictureTimes,
-                kilometersRegistered,
-                deliveryKilometer,
-                devolutionState
-              }).toPromise()
-    
-              console.log("aoa images response",response)
-    
-              if(response["message"]  && response["message"] === "ok")
-              {
-                console.log("dont synchro anymore")
-                /*this.store.dispatch( new SetAppointmentPictures({ appointment:keys[i],
-                   data: { ...appointmentsPictures[keys[i]], synchronized:true } }) )*/
-              }
-    
-            }catch(error){
-              console.error("error",error)
-            }
-          }else{
-            console.log("No internet")
-          }     
-        }
-
-      }      
-    })
-
 
     startMonitoring((type) => {
         switch (type) {

@@ -13,16 +13,16 @@ import { AppState, selectCitasState } from '../flux/app.states';
 import { Store } from '@ngrx/store';
 import * as moment from "moment"
 import { SetAppointmentPictures } from '../flux/actions/apiloads.actions'
-import { selectApiloadsState } from '../flux/app.states';
+import {  IsFetching } from '../flux/actions/app.actions'
+import { selectApiloadsState,  selectAuthState } from '../flux/app.states';
 
 import { connectionType, getConnectionType }from "tns-core-modules/connectivity";
-
-
-import { fromAsset } from "tns-core-modules/image-source";
+import { fromAsset, ImageSource, fromFile } from "tns-core-modules/image-source";
+import { CitasService } from "../services/citas.services";
 
 const options = {
-    width: 500,
-    height: 500,
+    width: 300,
+    height: 300,
     keepAspectRatio: true,
     saveToGallery: true
 };
@@ -46,6 +46,8 @@ export class CarphotosComponent implements OnInit {
 	contractImage: Image;
 	checkCameraImage: Image;
 	inventoryCameraImage: Image;
+	aditional1Image: Image;
+	aditional2Image: Image;
 
 	prevFrontImage: string;
 	prevLeftImage: string;
@@ -70,11 +72,16 @@ export class CarphotosComponent implements OnInit {
 	//
 
 	kilometersRegistered: number;
-	deliveryKilometer:number
+	deliveryKilometer:number;
+	kilometerLimit:number;
+	proccess:string;
 
+
+	currentAppointmentData: any
 	getApiloadsState: Observable<any>;
-
 	devolutionState: string
+
+	getAuthState: Observable<any>;
 
 	options: ModalDialogOptions = {
 		viewContainerRef: this.viewContainerRef,
@@ -82,27 +89,48 @@ export class CarphotosComponent implements OnInit {
 		context: {}
 	};
 
+	userN: string;
+
+	userId: any;
+
+	synchronized: boolean;
+
 	constructor(private page: Page, private router: RouterExtensions,
-		private modalService: ModalDialogService, private viewContainerRef: ViewContainerRef,
+		private modalService: ModalDialogService,
+		private citasService: CitasService,
+		private viewContainerRef: ViewContainerRef,
 		private route: ActivatedRoute, private store: Store<AppState>) {
 		this.getAppointmentsState = this.store.select(selectCitasState);
-		this.getApiloadsState = this.store.select(selectApiloadsState)
+		this.getApiloadsState = this.store.select(selectApiloadsState);
+		this.getAuthState = this.store.select(selectAuthState);
 	}
 
 	ngOnInit(): void {		
 		
+		this.isFetching = false
+
 		this.pictureTimes = {}
 
 		this.page.actionBarHidden = true;
 
 		this.route.params.subscribe((params: Params) => {
-			console.log(params);
+			//console.log("params",params);
 			this.mode = params.mode;
 			this.appointment = params.appointment
 			this.isDelivery = params.isDelivery === "true"
 
 			console.log( typeof  this.isDelivery )
 
+		});
+
+		this.getAuthState.subscribe( (state) =>
+		{
+				//console.log("authState",state)		
+
+				this.userN = state.userData.name
+				
+				this.userId = state.userData.id
+				
 		});
 
 		this.getApiloadsState.subscribe( (state) =>
@@ -120,24 +148,48 @@ export class CarphotosComponent implements OnInit {
 				this.contractImage = state.appointmentsPictures[this.appointment].contractImage
 				this.checkCameraImage = state.appointmentsPictures[this.appointment].checkCameraImage 
 				this.inventoryCameraImage = state.appointmentsPictures[this.appointment].inventoryCameraImage
-				this.pictureTimes = state.appointmentsPictures[this.appointment].pictureTimes
+				this.aditional1Image = state.appointmentsPictures[this.appointment].aditional1Image
+				this.aditional2Image = state.appointmentsPictures[this.appointment].aditional2Image
+
+				this.pictureTimes = state.appointmentsPictures[this.appointment].pictureTimes || {}
 				this.kilometersRegistered = state.appointmentsPictures[this.appointment].kilometersRegistered
 				this.deliveryKilometer = state.appointmentsPictures[this.appointment].deliveryKilometer
+
+				this.kilometerLimit = state.appointmentsPictures[this.appointment].kilometerLimit || 0
+				this.proccess = state.appointmentsPictures[this.appointment].proccess
+
+				this.synchronized = state.appointmentsPictures[this.appointment].synchronized
 			}
 		})
 
 		this.getAppointmentsState.subscribe( (state) =>
 		{
 
+			//console.log("full state",state)
+
 				if(this.mode == 2)
 				{
-					//console.log(state.siniesterInfo);
+					//console.log("state.siniesterInfo",state.siniesterInfo );
 
-					this.currentSiniester = state.DevolAppointments.filter( devol =>
-								state.siniesterInfo.numero == devol.numero
-					)[0];
+					/*const siniesterNumberResult = state.siniesterInfo.filter( info => info.citaid.toString() === this.appointment.toString()  )
 
-					console.log("current siniester");
+					const siniesterNumber = siniesterNumberResult[0].numero
+
+					console.log("siniesterNumber",siniesterNumber)
+
+					this.currentSiniester = state.DevolAppointments.filter( devol =>{
+						console.log("devol",devol)
+						return  devol.numero === siniesterNumber
+					})[0];*/
+
+					
+
+					this.currentSiniester = state.DevolAppointments.filter( devol =>{
+						return  devol.citaid.toString() === this.appointment
+					})[0]
+
+					console.log("current siniester",this.currentSiniester);
+
 					//frontal
 					console.log(this.currentSiniester.fotovh1_f);
 					this.prevFrontImage = this.urlPage+this.currentSiniester.fotovh1_f;
@@ -168,10 +220,10 @@ export class CarphotosComponent implements OnInit {
 
 		});
 
-		const kilometers = this.kilometersRegistered ? this.kilometersRegistered.toString() : null
+		const kilometers = this.kilometersRegistered ? this.kilometersRegistered.toString() : this.kilometerLimit.toString()
 
 
-		if(!this.isDelivery)
+		if(!this.isDelivery  && this.proccess === "assign")
 		{
 			prompt({title:"¿Cual es el kilometraje actual?", defaultText:kilometers,
 			okButtonText: "CONTINUAR", inputType:"number"}).then(r => {
@@ -268,7 +320,7 @@ export class CarphotosComponent implements OnInit {
                 okButtonText: "Ok"
             });
 		}
-		else if( this.isDelivery && this.deliveryKilometer ){
+		else if( this.isDelivery && !this.deliveryKilometer ){
 			alert({
                 title: "error",
                 message: "Necesita poner el kilometraje adicional antes de guardar las imagenes",
@@ -283,29 +335,46 @@ export class CarphotosComponent implements OnInit {
             });
 		}
 		else{
+
+			if( this.isDelivery && this.deliveryKilometer &&  this.deliveryKilometer < this.kilometerLimit  )
+			{
+				alert({
+					title: "error",
+					message: "El kilometraje de domicilio no puede ser menor a "+this.kilometerLimit,
+					okButtonText: "Ok"
+				});
+				return
+			}
+
+			if( this.kilometersRegistered < this.kilometerLimit   ){
+				alert({
+					title: "error",
+					message: "El kilometraje de servicio no puede ser menor a "+this.kilometerLimit,
+					okButtonText: "Ok"
+				});
+				return
+			}
+
 			//console.log("frontCameraImage",this.frontCameraImage)
 
 			if(	!this.frontCameraImage ||
 				!this.leftCameraImage ||
 				!this.rightCameraImage ||
 				!this.backCameraImage ||
-				!this.odometerCameraImage ||
-				!this.contractImage ||
-				!this.checkCameraImage ||
-				!this.inventoryCameraImage
+				!this.odometerCameraImage 
 			)
 			{
 				alert({
 					title: "error",
-					message: "Necesitas poner todas las imagenes para continuar",
+					message: "Necesitas poner todas las imagenes obligatorias para continuar",
 					okButtonText: "Ok"
 				});
 			}else{
-				alert({
+				/*alert({
 					title: "Bien",
 					message: "Imagenes guardadas",
 					okButtonText: "Ok"
-				});
+				});*/
 				this.sendPics()
 			}
 
@@ -326,7 +395,7 @@ export class CarphotosComponent implements OnInit {
 			title = "¿Cual es el kilometraje actual?"
 		}
 
-		const kilometers = this.kilometersRegistered ? this.kilometersRegistered.toString() : null
+		const kilometers = this.kilometersRegistered ? this.kilometersRegistered.toString() : this.kilometerLimit.toString()
 
 		prompt({title, defaultText:kilometers,
 		 inputType:"number",okButtonText: "CONTINUAR"}).then(r => {
@@ -342,7 +411,7 @@ export class CarphotosComponent implements OnInit {
 		
 		console.log("this.mode",this.mode)
 
-		const kilometers = this.deliveryKilometer ? this.deliveryKilometer.toString() : null
+		const kilometers = this.deliveryKilometer ? this.deliveryKilometer.toString() : this.kilometerLimit.toString()
 
 		if( Number(this.mode) === 1 )
 		{
@@ -377,6 +446,19 @@ export class CarphotosComponent implements OnInit {
 	sendPics(){
 		console.log("Enviar fotos");
 
+		if(this.synchronized)
+		{
+			alert({
+				title: "espera",
+				message: "Este proceso ya fue enviado al servidor",
+				okButtonText: "Ok"
+			});
+
+			return
+		}
+
+		this.isFetching = true
+
 		const appointmentPicture = {
 			frontCameraImage:this.frontCameraImage,
 			leftCameraImage:this.leftCameraImage,
@@ -386,6 +468,8 @@ export class CarphotosComponent implements OnInit {
 			contractImage:this.contractImage,
 			checkCameraImage:this.checkCameraImage,
 			inventoryCameraImage:this.inventoryCameraImage,
+			aditional1Image:this.aditional1Image,
+			aditional2Image:this.aditional2Image,
 			pictureTimes:this.pictureTimes,
 			kilometersRegistered:this.kilometersRegistered,
 			mode:this.mode,
@@ -393,7 +477,133 @@ export class CarphotosComponent implements OnInit {
 			devolutionState:this.devolutionState
 		}
 
+	
+
 		this.store.dispatch( new SetAppointmentPictures({ appointment:this.appointment, data: appointmentPicture }) )
+
+		const type = String(this.mode) === "1" ? "deliver" : "devolution"
+
+		let frontImageSrc: ImageSource
+		let leftImageSrc: ImageSource
+		let rightImageSrc: ImageSource
+		let backImageSrc: ImageSource
+		let odometerImageSrc: ImageSource
+		let contractImageSrc: ImageSource
+		let checkImageSrc: ImageSource
+		let inventoryImageSrc: ImageSource
+		let aditional1ImageSrc: ImageSource
+		let aditional2ImageSrc: ImageSource 
+
+		if(appointmentPicture.frontCameraImage)
+		{
+			frontImageSrc = fromFile(String(appointmentPicture.frontCameraImage))
+		}
+
+		if(appointmentPicture.leftCameraImage)
+		{
+			leftImageSrc = fromFile(String(appointmentPicture.leftCameraImage))
+		}
+
+		if(appointmentPicture.rightCameraImage)
+		{
+			rightImageSrc = fromFile(String(appointmentPicture.rightCameraImage))
+		}
+
+		if(appointmentPicture.backCameraImage)
+		{
+			backImageSrc = fromFile(String(appointmentPicture.backCameraImage))
+		}
+
+		if(appointmentPicture.odometerCameraImage)
+		{
+			odometerImageSrc = fromFile(String(appointmentPicture.odometerCameraImage))
+		}
+
+		if(appointmentPicture.contractImage)
+		{
+			contractImageSrc = fromFile(String(appointmentPicture.contractImage))
+		}
+
+		if(appointmentPicture.checkCameraImage)
+		{
+			checkImageSrc = fromFile(String(appointmentPicture.checkCameraImage))
+		}
+
+		if(appointmentPicture.inventoryCameraImage)
+		{
+			inventoryImageSrc = fromFile(String(appointmentPicture.inventoryCameraImage))
+		}
+
+		if(appointmentPicture.aditional1Image)
+		{
+			aditional1ImageSrc = fromFile(String(appointmentPicture.aditional1Image))
+		}
+
+		if(appointmentPicture.aditional2Image)
+		{
+			aditional2ImageSrc = fromFile(String(appointmentPicture.aditional2Image))
+		}
+       
+
+		this.citasService.saveAppointment({
+			appointment:this.appointment,
+			type,
+			frontImageSrc:  frontImageSrc && frontImageSrc.toBase64String("jpeg",65),
+			leftImageSrc:leftImageSrc && leftImageSrc.toBase64String("jpeg",65),
+			rightImageSrc: rightImageSrc && rightImageSrc.toBase64String("jpeg",65),
+			backImageSrc: backImageSrc && backImageSrc.toBase64String("jpeg",65),
+			odometerImageSrc: odometerImageSrc && odometerImageSrc.toBase64String("jpeg",65),
+			contractImageSrc: contractImageSrc && contractImageSrc.toBase64String("jpeg",65),
+			checkImageSrc: checkImageSrc && checkImageSrc.toBase64String("jpeg",65),
+			inventoryImageSrc: inventoryImageSrc && inventoryImageSrc.toBase64String("jpeg",65),
+			aditional1ImageSrc: aditional1ImageSrc && aditional1ImageSrc.toBase64String("jpeg",65),
+			aditional2ImageSrc: aditional2ImageSrc && aditional2ImageSrc.toBase64String("jpeg",65),
+			
+			/*leftImageSrc:frontImageSrc.toBase64String("jpeg",65),
+			rightImageSrc:frontImageSrc.toBase64String("jpeg",65),
+			backImageSrc:frontImageSrc.toBase64String("jpeg",65),
+			odometerImageSrc:frontImageSrc.toBase64String("jpeg",65),
+			contractImageSrc:frontImageSrc.toBase64String("jpeg",65),
+			checkImageSrc:frontImageSrc.toBase64String("jpeg",65),
+			inventoryImageSrc:frontImageSrc.toBase64String("jpeg",65), 
+			aditional1ImageSrc:frontImageSrc.toBase64String("jpeg",65), 
+			aditional2ImageSrc:frontImageSrc.toBase64String("jpeg",65), */
+
+			pictureTimes:appointmentPicture.pictureTimes,
+			kilometersRegistered:appointmentPicture.kilometersRegistered,
+			deliveryKilometer:appointmentPicture.deliveryKilometer,
+			devolutionState:appointmentPicture.devolutionState,
+			userN:this.userN,
+			userId:this.userId
+
+		  }).subscribe( 
+			result => {
+				console.log('result',result["message"])
+				//response["message"] === "ok"
+				this.store.dispatch( new SetAppointmentPictures({ appointment:this.appointment,
+					data: { ...appointmentPicture, synchronized:true } }) )
+
+					this.isFetching = false
+
+				alert({
+					title: "bien",
+					message: "Enviado al servidor",
+					okButtonText: "Ok"
+				});
+        
+			},
+		  	error => {
+
+				this.isFetching = false
+
+				alert({
+					title: "error",
+					message: "Ha sucedido un error",
+					okButtonText: "Ok"
+				});
+		  })
+
+
 	}
 
 	serverPicLoaded(){
@@ -439,7 +649,7 @@ export class CarphotosComponent implements OnInit {
 			{
 				console.log("state result",result)
 
-				this.devolutionState = result.id
+				this.devolutionState = result.state.id
 			}
 
 

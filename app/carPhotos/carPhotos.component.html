@@ -1,8 +1,6 @@
 <Loading *ngIf="isFetching"></Loading>
 <StackLayout *ngIf="!isFetching" orientation="vertical">
-    <PageContainer pageTitle="Fotos">
-
-    </PageContainer>
+    <PageContainer pageTitle="Fotos"></PageContainer>
     <TabView androidTabsPosition="bottom" tabBackgroundColor="#003057"
         androidSelectedTabHighlightColor="#004857">
         <ScrollView orientation="vertical" height="100%" *tabItem="{title: 'Imagenes Vehículo'}"
@@ -88,7 +86,7 @@
            style="background-color:#224A50">
             <StackLayout>
 
-              <FlexboxLayout class="button-item" alignItems="center"
+              <FlexboxLayout *ngIf = " mode == 1 " class="button-item" alignItems="center"
                   justifyContent="space-between" >
                   <Image *ngIf="contractImage" [src]="contractImage" (doubleTap)="verifyThisImage(contractImage)"  >
                   </Image>
@@ -114,18 +112,36 @@
                       class="pic-icon"></Image>
                   <Label class="button-label" (tap)="onTakePictureTap($event,'inventoryCameraImage')" text="INVENTARIO"></Label>
                   <Image class="car-icon" (tap)="onTakePictureTap($event,'inventoryCameraImage')" src="~/images/icons/document.jpg"></Image>
-              </FlexboxLayout>             
+              </FlexboxLayout>     
+              
+              <FlexboxLayout class="button-item" alignItems="center"
+                  justifyContent="space-between">
+                  <Image *ngIf="aditional1Image" [src]="aditional1Image" (doubleTap)="verifyThisImage(aditional1Image)"  ></Image>
+                  <Image *ngIf="!aditional1Image" (tap)="onTakePictureTap($event,'aditional1Image')" src="~/images/icons/instagram.png" width="30%" height="30%"
+                      class="pic-icon"></Image>
+                  <Label class="button-label" (tap)="onTakePictureTap($event,'aditional1Image')" text="ADICIONAL"></Label>
+                  <Image class="car-icon" (tap)="onTakePictureTap($event,'aditional1Image')" src="~/images/icons/lupa.png"></Image>
+              </FlexboxLayout>
+
+              <FlexboxLayout class="button-item" alignItems="center"
+                  justifyContent="space-between">
+                  <Image *ngIf="aditional2Image" [src]="aditional2Image" (doubleTap)="verifyThisImage(aditional2Image)"  ></Image>
+                  <Image *ngIf="!aditional2Image" (tap)="onTakePictureTap($event,'aditional2Image')" src="~/images/icons/instagram.png" width="30%" height="30%"
+                      class="pic-icon"></Image>
+                  <Label class="button-label" (tap)="onTakePictureTap($event,'aditional2Image')" text="ADICIONAL 2"></Label>
+                  <Image class="car-icon" (tap)="onTakePictureTap($event,'aditional2Image')" src="~/images/icons/lupa.png"></Image>
+              </FlexboxLayout>
 
               <Button text="GUARDAR IMAGENES" class="button-option" (tap)="saveImages()" ></Button>
 
-              <Button text="REGISTRAR KILOMETRAJE" class="button-option" (tap)="registerKilometers()" ></Button>
+              <Button *ngIf="isDelivery" text="KILOMETRAJE DOMICILIO" class="button-option" (tap)="registerAditionalKilometers()" ></Button>
 
-              <Button *ngIf="isDelivery" text="KILOMETRAJE ADICIONAL" class="button-option" (tap)="registerAditionalKilometers()" ></Button>
+              <Button text="KILOMETRAJE SERVICIO" class="button-option" (tap)="registerKilometers()" ></Button>             
 
-              <Button text="REALIZAR ENCUESTA" class="button-option" (tap)="makeSurvey()" ></Button>
+              <!--<Button text="REALIZAR ENCUESTA" class="button-option" (tap)="makeSurvey()" isEnabled="false" ></Button>
 
-              <Button text="REALIZAR ACTA ENTREGA" class="button-option" (tap)="makeAct()" ></Button>
-
+              <Button text="REALIZAR ACTA ENTREGA" class="button-option" (tap)="makeAct()" isEnabled="false" ></Button>
+              -->
               <!--
               <Image *ngIf = " mode == 2  && showPictures " class="car-icon image-taken"
                src="https://app.aoacolombia.com/Control/operativo/siniestro/185/1850715/15677007113374671192359385952227.jpg"></Image>

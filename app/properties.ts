@@ -11,7 +11,8 @@ export class properties{
 
     private constructor(){
         //this.appUrl = 'http://sac.aoacolombia.com:3000/api';
-        this.appUrl = 'http://192.168.10.11:3000/api'; 
+        //this.appUrl = 'http://192.168.10.12:3000/api'; 
+        this.appUrl = 'https://a10c614e66c0.ngrok.io/api'
     }
 
     public getAppUrl(){

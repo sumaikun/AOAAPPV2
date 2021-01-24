@@ -5,6 +5,9 @@ import { Store } from '@ngrx/store';
 import { ModalDialogParams } from "nativescript-angular/modal-dialog";
 import { RouterExtensions } from "nativescript-angular/router";
 import { alert } from "tns-core-modules/ui/dialogs";
+import { startMonitoring, stopMonitoring }from "tns-core-modules/connectivity";
+import * as connectivityModule from "tns-core-modules/connectivity";
+import { CitasService } from "../services/citas.services";
 
 @Component({
 	selector: "Infoappointment",
@@ -18,11 +21,20 @@ export class InfoappointmentComponent implements OnInit {
 	siniesterInfo: any;
 	readyToShow: boolean = false;
 	params:any;
+	loading : boolean;
+	resultCheck: string; 
+	foundKilometer: string; 
 
-	constructor(private store: Store<AppState>, private _params: ModalDialogParams, private router: RouterExtensions) {
+	constructor(private store: Store<AppState>,
+		 private citasService: CitasService,
+		 private _params: ModalDialogParams,
+		 private router: RouterExtensions) {
 		this.getAppointmentsState = this.store.select(selectCitasState);
 		this.params = _params
+		this.loading = true
 	}
+
+	
 
 	ngOnInit(): void {
 		//console.log("modal params",this.params)
@@ -36,7 +48,7 @@ export class InfoappointmentComponent implements OnInit {
 
 			if(siniesterInfo != -1)
 			{
-				//console.log("data",state.siniesterInfo[siniesterInfo])
+				console.log("data",state.siniesterInfo[siniesterInfo])
 				this.siniesterInfo = state.siniesterInfo[siniesterInfo];
 				this.readyToShow = true;
 			}else{
@@ -50,12 +62,104 @@ export class InfoappointmentComponent implements OnInit {
 
 			
 		});
+
+		startMonitoring( async (type) => {
+
+			if( type === connectivityModule.connectionType.wifi || type ===  connectivityModule.connectionType.mobile )
+			{
+				//console.log("with internet",this.params.context.mode)
+
+				if(this.params.context.mode === 1)
+				{
+					console.log("check operator deliver")
+					const response = await this.citasService.checkAssignInDeliver(this.params.context.userId,this.params.context.appointment).toPromise()
+					console.log("response",response["message"],response["operatorResult"])
+					const validation = response["message"]
+					if(validation["operario_domicilio"] === 0){
+						console.log("time to assign operator")
+						this.resultCheck = "assign"
+					}
+					else{
+						
+						if(validation["operario_domicilio"] === this.params.context.userId )
+						{
+							this.resultCheck = "continue"
+						}else{
+							this.resultCheck = "not allowed"
+							alert({
+								title: "espera",
+								message: "esta cita fue tomada por otro operario: "+response["operatorResult"][0].nombre+" "+response["operatorResult"][0].apellido,
+								okButtonText: "Ok"
+							})
+						}
+					}
+
+				}else{
+					console.log("check operator devolution")
+					const response = await this.citasService.checkAssignInDevolution(this.params.context.userId,this.params.context.appointment).toPromise()
+					console.log("response",response["message"],response["operatorResult"])
+					const validation = response["message"]
+					if(validation["operario_domiciliod"] === 0){
+						console.log("time to assign operator")
+						this.resultCheck = "assign"
+					}
+					else{
+						const validation = response["message"]
+						if(validation["operario_domiciliod"] === this.params.context.userId )
+						{
+							this.resultCheck = "continue"
+						}else{
+							this.resultCheck = "not allowed"
+							alert({
+								title: "espera",
+								message: "esta cita fue tomada por otro operario: "+response["operatorResult"][0].nombre+" "+response["operatorResult"][0].apellido,
+								okButtonText: "Ok"
+							})
+						}
+					}
+				}
+
+				this.loading = false
+				
+			}
+			else{
+				console.log("no internet")
+				this.loading = false
+			}		
+				
+			
+		});
 	}
 
-	onButtonTap(): void {
-		let self = this;
-		self._params.closeCallback(true);
+	async onButtonTap() {
+
+		if(this.resultCheck === "assign" && this.params.context.mode === 1)
+		{
+			await this.citasService.AssignInDeliver({appointment:this.params.context.appointment,operatorId:this.params.context.userId}).toPromise()
+		}
+
+		if(this.resultCheck === "assign" && this.params.context.mode === 2)
+		{
+			await this.citasService.AssignInDevolution({appointment:this.params.context.appointment,operatorId:this.params.context.userId}).toPromise()
+		}
+
+		if(this.resultCheck === "assign" || this.resultCheck === "continue")
+		{
+			const kilometerResult = await this.citasService.checkKilometerLimit({plate:this.params.context.plate}).toPromise()
+
+			console.log("kilometerResult",kilometerResult)
+
+			this.foundKilometer = kilometerResult["message"]
+		} 
 		
+		let self = this;
+		self._params.closeCallback({ proccess:this.resultCheck, foundKilometer:this.foundKilometer });
+		
+	}
+
+	ngOnDestroy() {
+		// Stoping the connection monitoring
+		stopMonitoring();
 	}
 
 }

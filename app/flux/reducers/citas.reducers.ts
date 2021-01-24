@@ -109,7 +109,7 @@ export function reducer(state = initialState, action: All): State {
 
         action.payload.forEach( data =>{
 
-          //console.log(data)
+          console.log("payload data",data)
 
           const index = previousSiniesters.findIndex( siniester =>  siniester.citaid  === data.citaid )
           

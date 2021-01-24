@@ -27,7 +27,8 @@
             <Label row="3" col="0" text="Dias de servicio"></Label>
             <Label row="3" col="1" [text]="readyToShow ? siniesterInfo.dias_servicio: '' "></Label>
         </GridLayout>
-        <Button id="process-button" text="PROCESAR CITA" (tap)="onButtonTap()"></Button>
+        <Button *ngIf="!loading && resultCheck != 'not allowed' " id="process-button" [text]=" resultCheck === 'assign' ? 'PROCESAR CITA' : 'CONTINUAR'  "
+         (tap)="onButtonTap()"></Button>
 
     </StackLayout>
 </ScrollView>
